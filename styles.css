@@ -1,0 +1,1804 @@
+/* Stylesheet for Smart Quran Memorizer - Luxury Dark Emerald Theme */
+
+:root {
+    --bg-main: #05120e;
+    --bg-gradient: linear-gradient(135deg, #05120e 0%, #0a251c 50%, #05120e 100%);
+    --bg-card: rgba(13, 43, 34, 0.7);
+    --bg-card-hover: rgba(18, 56, 45, 0.8);
+    --bg-input: #081d16;
+    
+    --primary: #10b981;
+    --primary-glow: rgba(16, 185, 129, 0.4);
+    --primary-light: #34d399;
+    --accent: #fbbf24;
+    --accent-glow: rgba(251, 191, 36, 0.5);
+    --danger: #ef4444;
+    --danger-glow: rgba(239, 68, 68, 0.4);
+    
+    --text-main: #f0fdf4;
+    --text-muted: #86efac;
+    --text-dark: #062f21;
+    
+    --border-color: rgba(16, 185, 129, 0.2);
+    --border-hover: rgba(52, 211, 153, 0.5);
+    
+    --shadow-main: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+    --shadow-glow: 0 0 20px rgba(16, 185, 129, 0.25);
+    --shadow-accent-glow: 0 0 15px rgba(251, 191, 36, 0.3);
+    
+    --font-quran: 'Amiri', Georgia, serif;
+    --font-title: 'Cairo', system-ui, -apple-system, sans-serif;
+    --font-ui: 'Cairo', 'Montserrat', system-ui, sans-serif;
+}
+
+/* Reset & Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-main);
+    background-image: var(--bg-gradient);
+    color: var(--text-main);
+    font-family: var(--font-ui), sans-serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    overflow-x: hidden;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: var(--bg-main);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--bg-card);
+    border-radius: 4px;
+    border: 2px solid var(--bg-main);
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary);
+}
+
+/* App Layout Container */
+.app-container {
+    width: 100%;
+    max-width: 1200px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* 1. Header & Progress Tracker */
+.app-header {
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: var(--shadow-main);
+}
+
+.header-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-icon {
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, var(--primary) 0%, #064e3b 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-main);
+    box-shadow: var(--shadow-glow);
+}
+
+.logo-area h1 {
+    font-family: var(--font-title);
+    font-size: 24px;
+    font-weight: 700;
+    background: linear-gradient(to left, var(--text-main), var(--primary-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Surah Selector Custom Styles */
+.surah-selector-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.surah-selector-wrapper label {
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+/* Custom Search Select Container */
+.search-select-container {
+    position: relative;
+    width: 250px;
+    z-index: 100;
+}
+
+.search-select-trigger {
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 10px 16px;
+    color: var(--text-main);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+    user-select: none;
+    direction: rtl;
+    gap: 8px;
+}
+
+.search-select-trigger:hover, 
+.search-select-container.open .search-select-trigger {
+    border-color: var(--primary-light);
+    box-shadow: 0 0 10px var(--primary-glow);
+}
+
+.search-select-trigger svg {
+    transition: transform 0.3s ease;
+    color: var(--text-muted);
+}
+
+.search-select-container.open .search-select-trigger svg {
+    transform: rotate(180deg);
+    color: var(--primary-light);
+}
+
+.search-select-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    left: 0;
+    background: #071c15;
+    border: 1px solid var(--border-hover);
+    border-radius: 12px;
+    box-shadow: var(--shadow-main), 0 0 15px rgba(0,0,0,0.5);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    max-height: 320px;
+    animation: scale-up-dropdown 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes scale-up-dropdown {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.search-select-dropdown.hidden {
+    display: none !important;
+}
+
+.search-select-search-box {
+    padding: 10px;
+    border-bottom: 1px solid rgba(16, 185, 129, 0.15);
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: #04100c;
+}
+
+.search-select-search-box input {
+    width: 100%;
+    background: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 8px 36px 8px 12px; /* Extra padding on the right for the search icon */
+    color: var(--text-main);
+    font-size: 13px;
+    outline: none;
+    text-align: right;
+    direction: rtl;
+    font-family: var(--font-ui), sans-serif;
+    transition: border-color 0.3s;
+}
+
+.search-select-search-box input:focus {
+    border-color: var(--primary-light);
+}
+
+.search-select-search-box svg {
+    position: absolute;
+    right: 20px;
+    color: var(--text-muted);
+    pointer-events: none;
+}
+
+.search-select-options-list {
+    overflow-y: auto;
+    max-height: 250px;
+    display: flex;
+    flex-direction: column;
+}
+
+.search-select-option {
+    padding: 10px 16px;
+    font-size: 13.5px;
+    color: var(--text-main);
+    cursor: pointer;
+    text-align: right;
+    direction: rtl;
+    transition: all 0.2s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.search-select-option:hover {
+    background-color: rgba(16, 185, 129, 0.15);
+    color: var(--primary-light);
+    padding-right: 20px; /* Slight slide effect */
+}
+
+.search-select-option.active {
+    background-color: var(--primary-glow);
+    color: var(--primary-light);
+    font-weight: 700;
+    border-right: 3px solid var(--primary-light);
+}
+
+.search-select-option-meta {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: var(--font-ui);
+}
+
+/* Memorization Progress Tracker Panel */
+.tracker-panel {
+    background: rgba(4, 15, 12, 0.6);
+    border-radius: 14px;
+    padding: 18px;
+    border: 1px solid rgba(16, 185, 129, 0.1);
+}
+
+.tracker-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.tracker-label {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.tracker-percentage {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--primary-light);
+    text-shadow: 0 0 8px var(--primary-glow);
+}
+
+.progress-bar-container {
+    height: 10px;
+    background: #04100c;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 8px;
+    border: 1px solid rgba(16, 185, 129, 0.05);
+}
+
+.progress-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+    box-shadow: 0 0 10px var(--primary-light);
+    border-radius: 6px;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tracker-stats {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-align: left;
+}
+
+/* Main Content Area Styling */
+.main-content {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 24px;
+}
+
+@media (max-width: 900px) {
+    .main-content {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Titles and Badges */
+.section-title-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.badge {
+    background: var(--primary-glow);
+    border: 1px solid var(--primary-light);
+    color: var(--primary-light);
+    padding: 3px 10px;
+    border-radius: 30px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.badge-accent {
+    background: rgba(251, 191, 36, 0.1);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+}
+
+.section-title {
+    font-family: var(--font-title);
+    font-size: 18px;
+    color: var(--text-main);
+}
+
+/* 2. Interactive Ayah Card */
+.ayah-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 32px;
+    min-height: 280px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 24px;
+    position: relative;
+    box-shadow: var(--shadow-main);
+    transition: border-color 0.3s ease;
+}
+
+.ayah-card:hover {
+    border-color: var(--border-hover);
+}
+
+/* Basmala Text */
+.basmala-text {
+    font-family: var(--font-quran);
+    font-size: 24px;
+    text-align: center;
+    color: var(--accent);
+    margin-bottom: -10px;
+    text-shadow: var(--shadow-accent-glow);
+}
+
+.basmala-text.hidden {
+    display: none;
+}
+
+/* Ayah Display Container */
+.ayah-text-display {
+    text-align: center;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 0;
+}
+
+.ayah-text {
+    font-family: var(--font-quran);
+    font-size: 32px;
+    line-height: 2.2;
+    text-align: center;
+    direction: rtl;
+    width: 100%;
+    color: var(--text-main);
+    transition: filter 0.3s ease;
+}
+
+/* Quranic Word Styling for Karaoke */
+.quran-word {
+    display: inline-block;
+    padding: 0 4px;
+    margin: 2px 2px;
+    border-radius: 4px;
+    transition: all 0.25s ease;
+}
+
+.quran-word.highlighted {
+    color: var(--accent);
+    text-shadow: 0 0 12px var(--accent-glow);
+    background: rgba(251, 191, 36, 0.08);
+    transform: scale(1.08);
+}
+
+/* Blur Filter for check mode */
+.ayah-text.blurred {
+    filter: blur(8px);
+    user-select: none;
+    cursor: pointer;
+}
+
+/* Reveal temporarily when user clicks */
+.ayah-text.blurred:active,
+.ayah-text.blurred.reveal-temp {
+    filter: blur(0px);
+}
+
+/* Check Mode Overlay Notification */
+.check-mode-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 84px; /* Stop before controls */
+    background: rgba(5, 18, 14, 0.85);
+    backdrop-filter: blur(4px);
+    border-radius: 20px 20px 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+    transition: all 0.3s ease;
+    z-index: 10;
+    pointer-events: none; /* Let clicks pass through to text underneath */
+}
+
+.check-mode-overlay.hidden {
+    display: none;
+    opacity: 0;
+}
+
+.overlay-content {
+    text-align: center;
+    color: var(--accent);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.overlay-content p {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.overlay-content span {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+/* Card Controls Footer */
+.card-controls {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+    z-index: 15; /* Stay above overlay */
+}
+
+.btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary) 0%, #065f46 100%);
+    color: var(--text-main);
+    box-shadow: var(--shadow-glow);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 15px var(--primary);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    background: var(--bg-input);
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+}
+
+.btn-secondary:hover {
+    border-color: var(--primary-light);
+    color: var(--text-main);
+    transform: translateY(-2px);
+}
+
+.btn-secondary.active {
+    background: var(--primary-glow);
+    border-color: var(--primary-light);
+    color: var(--text-main);
+    box-shadow: var(--shadow-glow);
+}
+
+.btn-secondary.active .icon-eye {
+    display: none;
+}
+.btn-secondary.active .icon-eye-off {
+    display: inline-block;
+}
+
+.icon-eye-off.hidden, .icon-pause.hidden, .hidden {
+    display: none !important;
+}
+
+/* Card Navigation Area */
+.card-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(16, 185, 129, 0.1);
+    padding-top: 18px;
+    z-index: 15;
+}
+
+.nav-arrow {
+    background: var(--bg-input);
+    border: 1px solid var(--border-color);
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.nav-arrow:hover {
+    border-color: var(--primary-light);
+    color: var(--primary-light);
+    transform: scale(1.05);
+}
+
+.nav-arrow:active {
+    transform: scale(0.95);
+}
+
+.ayah-index-display {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-muted);
+    font-family: var(--font-ui);
+}
+
+/* 3. Professional Recorder Card */
+.recorder-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 24px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 20px;
+    box-shadow: var(--shadow-main);
+}
+
+/* Visualizer Container styling */
+.visualizer-container {
+    background: #030d0a;
+    border: 1px solid rgba(16, 185, 129, 0.15);
+    border-radius: 16px;
+    height: 110px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.visualizer-canvas {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.visualizer-fallback-text {
+    font-size: 12px;
+    color: var(--text-muted);
+    z-index: 5;
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+/* Audio Modes Selector Style */
+.audio-modes-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.selector-title {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.modes-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.mode-option {
+    cursor: pointer;
+}
+
+.mode-option input {
+    display: none;
+}
+
+.mode-box {
+    background: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 10px 4px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.3s ease;
+    user-select: none;
+}
+
+.mode-icon {
+    font-size: 18px;
+}
+
+.mode-name {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+/* Radio button active styling */
+.mode-option input:checked + .mode-box {
+    background: var(--primary-glow);
+    border-color: var(--primary-light);
+    box-shadow: var(--shadow-glow);
+}
+
+.mode-option input:checked + .mode-box .mode-name {
+    color: var(--text-main);
+}
+
+.mode-option:hover .mode-box {
+    border-color: var(--border-hover);
+    transform: translateY(-2px);
+}
+
+/* Main Record button styling */
+.recording-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 0;
+}
+
+.record-btn {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--danger);
+    border: none;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-main);
+    box-shadow: 0 0 15px var(--danger);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.record-btn:hover {
+    transform: scale(1.05);
+    background: #ff4d4d;
+    box-shadow: 0 0 20px #ff4d4d;
+}
+
+.record-ring {
+    position: absolute;
+    top: -6px;
+    left: -6px;
+    right: -6px;
+    bottom: -6px;
+    border-radius: 50%;
+    border: 2px solid var(--danger);
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+/* Pulsing ring animation when recording */
+.record-btn.recording .record-ring {
+    animation: pulse-ring 1.5s infinite;
+    opacity: 1;
+}
+
+.record-btn.recording {
+    background: #111;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+    color: var(--danger);
+}
+
+.record-btn.recording:hover {
+    background: #222;
+}
+
+.record-btn.recording .record-icon {
+    display: none;
+}
+.record-btn.recording .stop-icon {
+    display: block;
+}
+
+.recording-timer {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-main);
+    font-family: var(--font-ui);
+    margin-top: 4px;
+}
+
+.recording-status-text {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+@keyframes pulse-ring {
+    0% {
+        transform: scale(0.95);
+        opacity: 0.8;
+    }
+    50% {
+        transform: scale(1.15);
+        opacity: 0.3;
+    }
+    100% {
+        transform: scale(0.95);
+        opacity: 0.8;
+    }
+}
+
+/* User Playback Panel */
+.user-playback-area {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    animation: slide-down 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slide-down {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.divider {
+    height: 1px;
+    background: rgba(16, 185, 129, 0.1);
+    margin: 5px 0;
+}
+
+.playback-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.btn-delete-recording {
+    background: transparent;
+    border: none;
+    color: var(--danger);
+    cursor: pointer;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: background 0.3s;
+}
+
+.btn-delete-recording:hover {
+    background: rgba(239, 68, 68, 0.1);
+}
+
+/* Custom Audio Player styles */
+.custom-audio-player {
+    background: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.player-play-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--primary);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-dark);
+    transition: all 0.3s;
+}
+
+.player-play-btn:hover {
+    transform: scale(1.08);
+    background: var(--primary-light);
+    box-shadow: var(--shadow-glow);
+}
+
+.player-progress-container {
+    flex-grow: 1;
+    height: 6px;
+    background: #04100c;
+    border-radius: 3px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.player-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--primary-light);
+    border-radius: 3px;
+}
+
+.player-time {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: var(--font-ui);
+}
+
+/* 4. Surah Index Section */
+.index-section {
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: var(--shadow-main);
+}
+
+.index-container {
+    margin-top: 14px;
+    max-height: 250px;
+    overflow-y: auto;
+    padding: 4px;
+    border-radius: 10px;
+    background: rgba(4, 15, 12, 0.4);
+    border: 1px solid rgba(16, 185, 129, 0.05);
+}
+
+/* Scrollbar adjustment for index */
+.index-container::-webkit-scrollbar {
+    width: 6px;
+}
+.index-container::-webkit-scrollbar-thumb {
+    background: rgba(16, 185, 129, 0.15);
+}
+
+.ayah-grid-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(68px, 1fr));
+    gap: 12px;
+}
+
+.empty-state-text {
+    grid-column: 1 / -1;
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-muted);
+    padding: 40px 0;
+}
+
+/* Ayah Grid Cells */
+.ayah-grid-cell {
+    background: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+    transition: all 0.3s ease;
+}
+
+.ayah-grid-cell:hover {
+    border-color: var(--primary-light);
+    color: var(--text-main);
+    transform: translateY(-2px);
+}
+
+.ayah-grid-cell.active {
+    background: var(--primary-glow);
+    border-color: var(--primary-light);
+    color: var(--text-main);
+    box-shadow: 0 0 10px var(--primary-glow);
+    font-weight: 700;
+}
+
+/* Small circle indicator for recorded verses */
+.ayah-grid-cell.recorded::after {
+    content: "";
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 7px;
+    height: 7px;
+    background-color: var(--primary-light);
+    border-radius: 50%;
+    box-shadow: 0 0 6px var(--primary-light);
+    animation: bounce-in 0.4s ease;
+}
+
+@keyframes bounce-in {
+    0% { transform: scale(0); }
+    70% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+}
+
+/* Footer Section */
+.app-footer {
+    text-align: center;
+    padding: 16px 0;
+    font-size: 11px;
+    color: var(--text-muted);
+    opacity: 0.7;
+    border-top: 1px solid rgba(16, 185, 129, 0.05);
+    margin-top: 20px;
+}
+
+/* Tafsir Container styling */
+.tafsir-container {
+    background: rgba(251, 191, 36, 0.04);
+    border: 1px dashed rgba(251, 191, 36, 0.25);
+    border-radius: 14px;
+    padding: 18px;
+    margin-top: 14px;
+    text-align: right;
+    direction: rtl;
+    animation: slide-down-tafsir 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slide-down-tafsir {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.tafsir-container.hidden {
+    display: none !important;
+}
+
+.tafsir-header {
+    font-family: var(--font-title);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tafsir-text {
+    font-size: 14.5px;
+    line-height: 1.8;
+    color: var(--text-main);
+    font-family: var(--font-ui), sans-serif;
+    font-weight: 400;
+}
+
+/* --- Kids Mode Styles & General Header Layout Adjustment --- */
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+/* Reciter Selector Styling */
+.reciter-selector {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.reciter-selector label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+.reciter-selector select {
+    padding: 8px 14px;
+    border-radius: 10px;
+    background: var(--card-bg, rgba(16, 185, 129, 0.08));
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    font-family: 'Cairo', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.3s ease;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding-left: 28px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2310b981' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: left 10px center;
+}
+
+.reciter-selector select:hover {
+    border-color: var(--primary-light);
+    background-color: rgba(16, 185, 129, 0.15);
+}
+
+.reciter-selector select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+}
+
+.reciter-selector select option {
+    background: #0a1f17;
+    color: var(--text-main);
+    padding: 8px;
+}
+
+.btn-toggle-kids {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: 12px;
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    user-select: none;
+}
+
+.btn-toggle-kids:hover {
+    background: rgba(16, 185, 129, 0.2);
+    border-color: var(--primary-light);
+    color: var(--text-main);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-glow);
+}
+
+.btn-toggle-kids:active {
+    transform: translateY(0);
+}
+
+.kids-emoji {
+    display: none;
+}
+
+body.kids-mode .kids-emoji {
+    display: inline-block;
+    animation: kids-bounce-emoji 1s ease infinite alternate;
+}
+
+@keyframes kids-bounce-emoji {
+    from { transform: translateY(0) scale(1); }
+    to { transform: translateY(-4px) scale(1.1); }
+}
+
+body.kids-mode {
+    --bg-main: #f0fdf4;
+    --bg-gradient: linear-gradient(135deg, #fffbeb 0%, #f0fdf4 50%, #e0f2fe 100%);
+    --bg-card: #ffffff;
+    --bg-card-hover: #fdfdfd;
+    --bg-input: #f1f5f9;
+    
+    --primary: #22c55e;
+    --primary-glow: rgba(34, 197, 94, 0.15);
+    --primary-light: #4ade80;
+    --accent: #f59e0b;
+    --accent-glow: rgba(245, 158, 11, 0.2);
+    --danger: #ef4444;
+    --danger-glow: rgba(239, 68, 68, 0.2);
+    
+    --text-main: #1e293b;
+    --text-muted: #475569;
+    --text-dark: #0f172a;
+    
+    --border-color: #e2e8f0;
+    --border-hover: #cbd5e1;
+    
+    --shadow-main: 0 15px 35px rgba(148, 163, 184, 0.15), 0 5px 15px rgba(148, 163, 184, 0.1);
+    --shadow-glow: 0 0 20px rgba(34, 197, 94, 0.15);
+    --shadow-accent-glow: 0 0 15px rgba(245, 158, 11, 0.15);
+}
+
+/* Rounded and friendly styling for kids mode */
+body.kids-mode .app-header,
+body.kids-mode .ayah-card,
+body.kids-mode .recorder-card,
+body.kids-mode .index-section {
+    border-radius: 28px;
+    border-width: 3px;
+    border-color: #cbd5e1;
+    box-shadow: var(--shadow-main);
+    background: #ffffff;
+}
+
+body.kids-mode .ayah-card:hover,
+body.kids-mode .recorder-card:hover,
+body.kids-mode .index-section:hover {
+    border-color: #94a3b8;
+}
+
+/* Search Select Trigger in kids mode */
+body.kids-mode .search-select-trigger {
+    background-color: #f1f5f9;
+    border: 2px solid #cbd5e1;
+    border-radius: 20px;
+    color: #1e293b;
+}
+body.kids-mode .search-select-trigger:hover, 
+body.kids-mode .search-select-container.open .search-select-trigger {
+    border-color: #4ade80;
+    box-shadow: 0 0 10px rgba(74, 222, 128, 0.3);
+}
+body.kids-mode .search-select-dropdown {
+    background: #ffffff;
+    border: 2px solid #94a3b8;
+    border-radius: 20px;
+}
+body.kids-mode .search-select-search-box {
+    background: #f8fafc;
+}
+body.kids-mode .search-select-search-box input {
+    background: #ffffff;
+    border: 2px solid #cbd5e1;
+    border-radius: 15px;
+    color: #1e293b;
+}
+body.kids-mode .search-select-option {
+    color: #1e293b;
+}
+body.kids-mode .search-select-option:hover {
+    background-color: #f0fdf4;
+    color: #22c55e;
+}
+body.kids-mode .search-select-option.active {
+    background-color: #dcfce7;
+    color: #15803d;
+    border-right-width: 4px;
+}
+
+/* Bubbly Buttons in kids mode */
+body.kids-mode .btn,
+body.kids-mode .nav-arrow {
+    border-radius: 25px;
+    font-weight: 700;
+    border: 2px solid transparent;
+}
+
+body.kids-mode .btn-primary {
+    background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+    color: #ffffff;
+    box-shadow: 0 6px 15px rgba(34, 197, 94, 0.3);
+}
+body.kids-mode .btn-primary:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 8px 20px rgba(34, 197, 94, 0.4);
+}
+body.kids-mode .btn-secondary {
+    background: #f1f5f9;
+    border: 2px solid #cbd5e1;
+    color: #475569;
+}
+body.kids-mode .btn-secondary:hover {
+    background: #e2e8f0;
+    border-color: #94a3b8;
+    color: #0f172a;
+    transform: translateY(-3px) scale(1.03);
+}
+body.kids-mode .btn-secondary.active {
+    background: #dcfce7;
+    border-color: #22c55e;
+    color: #15803d;
+    box-shadow: 0 6px 15px rgba(34, 197, 94, 0.2);
+}
+
+/* Navigation Arrows in kids mode */
+body.kids-mode .nav-arrow {
+    background: #f1f5f9;
+    border: 2px solid #cbd5e1;
+    color: #475569;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+}
+body.kids-mode .nav-arrow:hover {
+    background: #e2e8f0;
+    border-color: #94a3b8;
+    color: #0f172a;
+    transform: translateY(-3px) scale(1.05);
+}
+
+/* Playback area and visualizer in kids mode */
+body.kids-mode .visualizer-container {
+    background: #ffffff;
+    border: 2px solid #cbd5e1;
+    border-radius: 20px;
+}
+body.kids-mode .visualizer-fallback-text {
+    color: #475569;
+    font-weight: 600;
+}
+
+/* Audio mode selector box in kids mode */
+body.kids-mode .mode-box {
+    background: #f1f5f9;
+    border: 2px solid #cbd5e1;
+    border-radius: 16px;
+}
+body.kids-mode .mode-option input:checked + .mode-box {
+    background: #dcfce7;
+    border-color: #22c55e;
+    box-shadow: 0 4px 10px rgba(34, 197, 94, 0.2);
+}
+body.kids-mode .mode-option input:checked + .mode-box .mode-name {
+    color: #15803d;
+}
+
+/* Custom player in kids mode */
+body.kids-mode .custom-audio-player {
+    background: #f1f5f9;
+    border: 2px solid #cbd5e1;
+    border-radius: 20px;
+}
+body.kids-mode .player-play-btn {
+    background: #22c55e;
+    color: #ffffff;
+}
+body.kids-mode .player-progress-container {
+    background: #cbd5e1;
+}
+
+/* Surah Index Grid cells in kids mode */
+body.kids-mode .ayah-grid-cell {
+    background: #f1f5f9;
+    border: 2px solid #cbd5e1;
+    border-radius: 16px;
+    height: 54px;
+    color: #475569;
+    font-size: 15px;
+}
+body.kids-mode .ayah-grid-cell:hover {
+    background: #e2e8f0;
+    border-color: #94a3b8;
+    color: #0f172a;
+    transform: translateY(-3px) scale(1.05);
+}
+body.kids-mode .ayah-grid-cell.active {
+    background: #dcfce7;
+    border-color: #22c55e;
+    color: #15803d;
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+}
+
+/* Custom toggle kids mode button styling */
+body.kids-mode .btn-toggle-kids {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: #ffffff;
+    border: none;
+    box-shadow: 0 6px 15px rgba(245, 158, 11, 0.4);
+}
+body.kids-mode .btn-toggle-kids:hover {
+    background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+    box-shadow: 0 8px 20px rgba(245, 158, 11, 0.5);
+}
+
+body.kids-mode .reciter-selector select {
+    background: #ffffff;
+    border: 2px solid #22c55e;
+    color: #15803d;
+    font-weight: 700;
+    border-radius: 12px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2322c55e' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+}
+
+body.kids-mode .reciter-selector label {
+    color: #15803d;
+    font-weight: 700;
+}
+
+body.kids-mode .reciter-selector select option {
+    background: #ffffff;
+    color: #15803d;
+}
+
+/* Kids mode custom bounce animation for buttons on hover */
+body.kids-mode .btn:hover,
+body.kids-mode .nav-arrow:hover,
+body.kids-mode .btn-toggle-kids:hover,
+body.kids-mode .ayah-grid-cell:hover {
+    animation: kids-bounce 0.6s ease infinite alternate;
+}
+@keyframes kids-bounce {
+    from { transform: translateY(0); }
+    to { transform: translateY(-4px); }
+}
+
+/* Progress bar styling in kids mode */
+body.kids-mode .progress-bar-container {
+    height: 12px;
+    background: #cbd5e1;
+    border-radius: 8px;
+}
+body.kids-mode .progress-bar-fill {
+    background: linear-gradient(90deg, #4ade80 0%, #22c55e 100%);
+    box-shadow: 0 0 10px rgba(34, 197, 94, 0.4);
+    border-radius: 8px;
+}
+body.kids-mode .tracker-panel {
+    background: #f8fafc;
+    border: 2px solid #cbd5e1;
+    border-radius: 20px;
+}
+
+/* Tafsir container in kids mode */
+body.kids-mode .tafsir-container {
+    background: #fffbeb;
+    border: 2px dashed #f59e0b;
+    border-radius: 20px;
+}
+
+/* Check mode overlay in kids mode */
+body.kids-mode .check-mode-overlay {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 24px 24px 0 0;
+}
+body.kids-mode .overlay-content {
+    color: #f59e0b;
+}
+body.kids-mode .overlay-content span {
+    color: #475569;
+    font-weight: 600;
+}
+
+/* Scrollbar styling in kids mode */
+body.kids-mode ::-webkit-scrollbar-track {
+    background: #f8fafc;
+}
+body.kids-mode ::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border: 2px solid #f8fafc;
+}
+body.kids-mode ::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* --- Mobile Responsiveness and Compatibility --- */
+
+@media (max-width: 768px) {
+    .app-container {
+        padding: 12px;
+        gap: 16px;
+    }
+    
+    .app-header {
+        padding: 16px;
+    }
+    
+    .header-main {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 16px;
+    }
+    
+    .logo-area {
+        justify-content: center;
+    }
+    
+    .header-actions {
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+        gap: 12px;
+    }
+    
+    .surah-selector-wrapper {
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+    }
+    
+    .search-select-container {
+        width: 100%;
+    }
+
+    .reciter-selector {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .reciter-selector select {
+        flex: 1;
+    }
+    
+    .btn-toggle-kids {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .ayah-card {
+        padding: 20px;
+        min-height: 240px;
+    }
+    
+    .ayah-text {
+        font-size: 26px;
+        line-height: 2;
+    }
+    
+    .card-controls {
+        gap: 8px;
+    }
+    
+    .btn {
+        padding: 8px 14px;
+        font-size: 12px;
+        flex-grow: 1;
+        justify-content: center;
+    }
+    
+    .recorder-card {
+        padding: 16px;
+    }
+    
+    .modes-grid {
+        gap: 6px;
+    }
+    
+    .mode-box {
+        padding: 8px 2px;
+    }
+    
+    .mode-name {
+        font-size: 9px;
+    }
+    
+    .index-section {
+        padding: 16px;
+    }
+    
+    .ayah-grid-list {
+        grid-template-columns: repeat(auto-fill, minmax(52px, 1fr));
+        gap: 8px;
+    }
+    
+    .ayah-grid-cell {
+        height: 42px;
+        font-size: 12px;
+    }
+    
+    /* Adjust visualizer text */
+    .visualizer-fallback-text {
+        font-size: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .ayah-text {
+        font-size: 22px;
+    }
+    
+    .basmala-text {
+        font-size: 20px;
+    }
+    
+    .card-controls {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+    }
+    
+    .card-controls .btn-primary {
+        grid-column: span 2;
+    }
+    
+    .modes-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .mode-box {
+        flex-direction: row;
+        justify-content: center;
+        gap: 10px;
+        padding: 10px;
+    }
+    
+    .mode-name {
+        font-size: 11px;
+    }
+    
+    .nav-arrow {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .ayah-index-display {
+        font-size: 12px;
+    }
+}
+
+/* --- Audio Sliders & Tracker Actions Styles --- */
+
+.tracker-stats-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.tracker-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.btn-tracker-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    user-select: none;
+}
+
+.btn-tracker-action:hover {
+    background: rgba(16, 185, 129, 0.25);
+    border-color: var(--primary-light);
+    color: var(--text-main);
+    transform: translateY(-2px);
+}
+
+.btn-tracker-action.active {
+    background: var(--primary-glow);
+    border-color: var(--primary-light);
+    color: var(--text-main);
+    box-shadow: var(--shadow-glow);
+}
+
+.btn-tracker-action svg {
+    transition: transform 0.2s;
+}
+
+.btn-tracker-action:hover svg {
+    transform: scale(1.1);
+}
+
+/* Audio sliders panel styling */
+.audio-sliders-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: rgba(4, 15, 12, 0.4);
+    border: 1px solid rgba(16, 185, 129, 0.1);
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-top: -6px;
+}
+
+.slider-control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.slider-label-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.slider-value {
+    color: var(--accent);
+    font-family: var(--font-ui);
+    font-weight: 700;
+}
+
+.custom-range-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--bg-input);
+    outline: none;
+    transition: background 0.3s;
+}
+
+.custom-range-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--primary-light);
+    cursor: pointer;
+    border: 2px solid var(--bg-main);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    transition: transform 0.2s;
+}
+
+.custom-range-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+}
+
+/* Kids Mode Overrides for Sliders & Tracker Actions */
+body.kids-mode .btn-tracker-action {
+    border-radius: 15px;
+    border-width: 2px;
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    color: #475569;
+}
+
+body.kids-mode .btn-tracker-action:hover {
+    background: #e2e8f0;
+    border-color: #94a3b8;
+    color: #0f172a;
+}
+
+body.kids-mode .btn-tracker-action.active {
+    background: #dcfce7;
+    border-color: #22c55e;
+    color: #15803d;
+}
+
+body.kids-mode .audio-sliders-panel {
+    background: #f8fafc;
+    border: 2px solid #cbd5e1;
+    border-radius: 16px;
+}
+
+body.kids-mode .slider-label-row {
+    color: #475569;
+    font-weight: 700;
+}
+
+body.kids-mode .slider-value {
+    color: #d97706;
+}
+
+body.kids-mode .custom-range-slider {
+    background: #cbd5e1;
+}
+
+body.kids-mode .custom-range-slider::-webkit-slider-thumb {
+    background: #22c55e;
+    border-color: #ffffff;
+}
+
+/* Mobile responsive overrides for sliders and tracker actions */
+@media (max-width: 768px) {
+    .tracker-stats-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .tracker-actions {
+        width: 100%;
+        flex-direction: column;
+    }
+    .btn-tracker-action {
+        width: 100%;
+        justify-content: center;
+        padding: 10px 16px;
+    }
+}
+
+
+

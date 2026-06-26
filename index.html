@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المحفظ الذكي للقرآن الكريم</title>
+    <!-- Google Fonts: Amiri for Quranic Text, Cairo for Titles, Montserrat & Cairo for UI elements -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@400;600;700;800&family=Montserrat:wght@300;400;600;700&family=Reem+Kufi:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- App Container -->
+    <div class="app-container">
+        
+        <!-- 1. Header & Progress Tracker -->
+        <header class="app-header">
+            <div class="header-main">
+                <div class="logo-area">
+                    <div class="logo-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </div>
+                    <h1>المُحفِظ الذكي <span class="kids-emoji">✨👶</span></h1>
+                </div>
+                <div class="header-actions">
+                    <!-- Reciter Selector -->
+                    <div class="reciter-selector">
+                        <label for="reciter-select">القارئ:</label>
+                        <select id="reciter-select">
+                            <option value="Fares_Abbad" selected>فارس عباد</option>
+                            <option value="Alafasy">مشاري العفاسي</option>
+                        </select>
+                    </div>
+
+                    <!-- Surah Search Select -->
+                    <div class="search-select-container" id="surah-search-select">
+                        <div class="search-select-trigger" id="surah-select-trigger">
+                            <span id="selected-surah-label">اختر سورة...</span>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                        </div>
+                        <div class="search-select-dropdown hidden" id="surah-select-dropdown">
+                            <div class="search-select-search-box">
+                                <input type="text" id="surah-search-input" placeholder="ابحث باسم السورة أو رقمها..." autocomplete="off">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            </div>
+                            <div class="search-select-options-list" id="surah-options-list">
+                                <!-- Options will be dynamically injected here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Kids Mode Toggle -->
+                    <button class="btn-toggle-kids" id="btn-kids-mode-toggle" title="تفعيل وضع الأطفال">
+                        <span class="kids-mode-icon">👶</span>
+                        <span class="kids-mode-label" id="kids-mode-label">وضع الأطفال</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Memorization Tracker -->
+            <div class="tracker-panel">
+                <div class="tracker-info">
+                    <span class="tracker-label">مؤشر التقدم في حفظ السورة:</span>
+                    <span id="progress-text" class="tracker-percentage">0%</span>
+                </div>
+                <div class="progress-bar-container">
+                    <div id="progress-fill" class="progress-bar-fill"></div>
+                </div>
+                <div class="tracker-stats-row">
+                    <div class="tracker-stats">
+                        <span id="recorded-count">الآيات المحفوظة: 0 من 0</span>
+                    </div>
+                    <div class="tracker-actions">
+                        <button class="btn-tracker-action hidden" id="btn-play-user-surah" title="استمع للتسميع المتتالي الكامل بصوتك للسورة الحالية">
+                            <svg class="icon-play" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                            <svg class="icon-pause hidden" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                            <span>تشغيل تسميعي 🎧</span>
+                        </button>
+                        <button class="btn-tracker-action hidden" id="btn-export-user-surah" title="تجميع وتنزيل تلاوتك الكاملة للسورة بصيغة WAV">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            <span>تنزيل تلاوتتي بصيغة WAV 📥</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            
+            <!-- 2. Interactive Ayah Card -->
+            <section class="card-section">
+                <div class="section-title-wrapper">
+                    <span class="badge">الآية النشطة</span>
+                    <h2 class="section-title">لوحة التلاوة والتسميع <span class="kids-emoji">🎈</span></h2>
+                </div>
+                
+                <div class="ayah-card" id="ayah-card-container">
+                    <!-- Basmala placeholder if ayah is first in surah -->
+                    <div id="basmala-container" class="basmala-text hidden">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
+                    
+                    <!-- Quranic Text Area -->
+                    <div class="ayah-text-display" id="ayah-display-box">
+                        <div class="ayah-text" id="quran-text-container">
+                            <!-- Words will be dynamically injected here for Karaoke effect -->
+                            اضغط على سورة للبدء في الحفظ والتسميع
+                        </div>
+                    </div>
+                    
+                    <!-- Check Mode Cover Overlay (when hidden) -->
+                    <div class="check-mode-overlay hidden" id="check-overlay">
+                        <div class="overlay-content">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                            <p>وضع التسميع نشط (النص مموه)</p>
+                            <span>انقر على النص بالأسفل لكشفه مؤقتاً عند النسيان</span>
+                        </div>
+                    </div>
+
+                    <!-- Card Utility Footer (Controls) -->
+                    <div class="card-controls">
+                        <!-- Play Recitation -->
+                        <button class="btn btn-primary" id="btn-listen" title="استمع لتلاوة الشيخ فارس عباد">
+                            <svg class="icon-play" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                            <svg class="icon-pause hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                            <span>الاستماع للقارئ</span>
+                        </button>
+                        
+                        <!-- Loop Mode Toggle -->
+                        <button class="btn btn-secondary" id="btn-loop" title="تفعيل التكرار التلقائي للآية">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+                            <span>تكرار</span>
+                        </button>
+
+                        <!-- Autoplay Toggle -->
+                        <button class="btn btn-secondary" id="btn-autoplay" title="التشغيل التلقائي المتتالي للآيات">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+                            <span>تلاوة متتالية</span>
+                        </button>
+
+                        <!-- Hide Text Toggle (Check Mode) -->
+                        <button class="btn btn-secondary" id="btn-hide-text" title="إخفاء النص لاختبار الحفظ">
+                            <!-- Eye icon (visible) -->
+                            <svg class="icon-eye" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                            <!-- Eye closed icon (hidden) -->
+                            <svg class="icon-eye-off hidden" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                            <span>إخفاء النص</span>
+                        </button>
+
+                        <!-- Tafsir Toggle -->
+                        <button class="btn btn-secondary" id="btn-tafsir" title="عرض تفسير ومعاني الآية الميسر">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A5 5 0 0 0 8 8M9 18h6M10 22h4"/></svg>
+                            <span>التفسير والـمعاني</span>
+                        </button>
+                    </div>
+
+                    <!-- Tafsir Box (Explanations) -->
+                    <div class="tafsir-container hidden" id="tafsir-container">
+                        <div class="tafsir-header">💡 التفسير الميسر للآية:</div>
+                        <p class="tafsir-text" id="tafsir-text-content">جاري تحميل التفسير...</p>
+                    </div>
+
+                    <!-- Navigation Bar -->
+                    <div class="card-navigation">
+                        <button class="nav-arrow" id="btn-prev-ayah" title="الآية السابقة">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                        </button>
+                        <span class="ayah-index-display" id="ayah-index-text">آية: 0 / 0</span>
+                        <button class="nav-arrow" id="btn-next-ayah" title="الآية التالية">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. Professional Recorder -->
+            <section class="recorder-section">
+                <div class="section-title-wrapper">
+                    <span class="badge badge-accent">التسجيل والتسميع</span>
+                    <h2 class="section-title">مسجل التلاوة الاحترافي <span class="kids-emoji">🧸</span></h2>
+                </div>
+
+                <div class="recorder-card">
+                    <!-- Live Visualizer Container -->
+                    <div class="visualizer-container">
+                        <canvas id="visualizer" class="visualizer-canvas"></canvas>
+                        <div class="visualizer-fallback-text" id="visualizer-text">المحلل الصوتي جاهز للتسجيل</div>
+                    </div>
+
+                    <!-- Audio Effect Modes Selection -->
+                    <div class="audio-modes-selector">
+                        <span class="selector-title">هندسة الصوت المباشرة:</span>
+                        <div class="modes-grid">
+                            <label class="mode-option active">
+                                <input type="radio" name="audio-mode" value="normal" checked>
+                                <div class="mode-box">
+                                    <div class="mode-icon">🎙️</div>
+                                    <span class="mode-name">عادي (طبيعي)</span>
+                                </div>
+                            </label>
+                            <label class="mode-option">
+                                <input type="radio" name="audio-mode" value="studio">
+                                <div class="mode-box">
+                                    <div class="mode-icon">🎛️</div>
+                                    <span class="mode-name">استوديو (منقّى)</span>
+                                </div>
+                            </label>
+                            <label class="mode-option">
+                                <input type="radio" name="audio-mode" value="echo">
+                                <div class="mode-box">
+                                    <div class="mode-icon">🕌</div>
+                                    <span class="mode-name">صدى المسجد</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Audio Sliders Controls -->
+                    <div class="audio-sliders-panel" id="audio-sliders-panel">
+                        <div class="slider-control-group">
+                            <div class="slider-label-row">
+                                <span>🎙️ منظم تضخيم الميكروفون:</span>
+                                <span class="slider-value" id="val-slider-gain">1.0x</span>
+                            </div>
+                            <input type="range" id="slider-gain" min="0.5" max="2.5" step="0.1" value="1.0" class="custom-range-slider">
+                        </div>
+                        
+                        <div class="slider-control-group hidden" id="group-slider-reverb">
+                            <div class="slider-label-row">
+                                <span>🕌 منظم عمق صدى الصوت:</span>
+                                <span class="slider-value" id="val-slider-reverb">0.65x</span>
+                            </div>
+                            <input type="range" id="slider-reverb" min="0.1" max="1.0" step="0.05" value="0.65" class="custom-range-slider">
+                        </div>
+                    </div>
+
+                    <!-- Main Recording Controls -->
+                    <div class="recording-controls">
+                        <!-- Record Button -->
+                        <button class="record-btn" id="btn-record-main" title="ابدأ تسجيل صوتك للآية الحالية">
+                            <span class="record-ring"></span>
+                            <span class="record-core"></span>
+                            <!-- Record mic icon -->
+                            <svg class="record-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+                            <!-- Stop square icon -->
+                            <svg class="stop-icon hidden" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>
+                        </button>
+                        <div class="recording-timer" id="record-timer">00:00</div>
+                        <div class="recording-status-text" id="record-status">اضغط على الزر الأحمر لبدء التسميع</div>
+                    </div>
+
+                    <!-- User Playback Container (Dynamically shown when recording exists) -->
+                    <div class="user-playback-area hidden" id="playback-area">
+                        <div class="divider"></div>
+                        <div class="playback-header">
+                            <span>تسميعك الصوتي للآية النشطة:</span>
+                            <button class="btn-delete-recording" id="btn-delete-rec" title="حذف هذا التسجيل">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                                <span>حذف</span>
+                            </button>
+                        </div>
+                        
+                        <!-- Custom Audio Player for recorded audio -->
+                        <div class="custom-audio-player">
+                            <button class="player-play-btn" id="btn-play-recorded">
+                                <svg class="play-svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                                <svg class="pause-svg hidden" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                            </button>
+                            <div class="player-progress-container" id="player-progress-bar">
+                                <div class="player-progress-fill" id="player-progress-fill"></div>
+                            </div>
+                            <span class="player-time" id="player-time-display">00:00</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- 4. Surah Index Directory -->
+        <section class="index-section">
+            <div class="section-title-wrapper">
+                <span class="badge">فهرس السورة</span>
+                <h2 id="index-title" class="section-title">فهرس الآيات <span class="kids-emoji">🌈</span></h2>
+            </div>
+            
+            <div class="index-container">
+                <div class="ayah-grid-list" id="ayah-index-list">
+                    <!-- Ayah cells will be dynamically injected here -->
+                    <div class="empty-state-text">يرجى اختيار سورة لعرض فهرس آياتها</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>المحفظ الذكي للقرآن الكريم © ٢٠٢٦ - تم التصميم بعناية لتيسير الحفظ والتجويد.</p>
+        </footer>
+    </div>
+
+    <!-- Hidden audio element for recitations -->
+    <audio id="reciter-audio-element" crossorigin="anonymous"></audio>
+
+    <script src="app.js"></script>
+</body>
+</html>
