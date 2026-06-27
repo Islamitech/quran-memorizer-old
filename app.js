@@ -144,7 +144,7 @@ function setupEventHandlers() {
             const ayah = surahAyahs[currentAyahIndex];
             const surahStr = pad3(currentSurah);
             const ayahStr = pad3(ayah.numberInSurah);
-            reciterAudio.src = `https://everyayah.com/data/${selectedReciter}_64kbps/${surahStr}${ayahStr}.mp3`;
+            reciterAudio.src = `https://everyayah.com/data/${selectedReciter}/${surahStr}${ayahStr}.mp3`;
             reciterAudio.load();
         }
     });
@@ -453,7 +453,7 @@ function loadAyah(index) {
     // Configure audio source for Sheikh Fares Abbad
     const surahStr = pad3(currentSurah);
     const ayahStr = pad3(ayah.numberInSurah);
-    reciterAudio.src = `https://everyayah.com/data/${selectedReciter}_64kbps/${surahStr}${ayahStr}.mp3`;
+    reciterAudio.src = `https://everyayah.com/data/${selectedReciter}/${surahStr}${ayahStr}.mp3`;
     reciterAudio.load();
     
     // Reset Karaoke State
