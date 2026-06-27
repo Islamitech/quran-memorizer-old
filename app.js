@@ -1,5 +1,17 @@
 // Smart Quran Memorizer Application Code
 
+// Helper function to normalize Arabic text (removes diacritics and unifies letters globally)
+function normalizeArabic(text) {
+    if (!text) return "";
+    return text
+        .replace(/[\u064B-\u065F\u0670]/g, "") // Remove all Arabic diacritics (harakat)
+        .replace(/[أإآ]/g, "ا")             // Normalize Alef
+        .replace(/ة/g, "ه")                 // Normalize Teh Marbuta
+        .replace(/ى/g, "ي")                 // Normalize Alif Maqsura / Yeh
+        .trim()
+        .toLowerCase();
+}
+
 // State Variables
 let currentSurah = 71; // Default to Surah Nuh
 let surahList = [];
@@ -176,7 +188,7 @@ function setupEventHandlers() {
 
     // Search input filter logic
     surahSearchInput.addEventListener('input', (e) => {
-        const filter = e.target.value.trim().toLowerCase();
+        const filter = normalizeArabic(e.target.value);
         const options = surahOptionsList.querySelectorAll('.search-select-option');
         options.forEach(opt => {
             const text = opt.dataset.searchText;
@@ -308,7 +320,8 @@ async function fetchSurahsList() {
             const opt = document.createElement('div');
             opt.className = 'search-select-option';
             opt.dataset.value = surah.number;
-            opt.dataset.searchText = `${surah.number} ${surah.name} ${surah.englishName.toLowerCase()}`;
+            const normalizedName = normalizeArabic(surah.name);
+            opt.dataset.searchText = `${surah.number} ${normalizedName} ${surah.englishName.toLowerCase()}`;
             
             if (surah.number === currentSurah) {
                 opt.classList.add('active');
