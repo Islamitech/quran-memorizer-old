@@ -1794,6 +1794,8 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
+}); // Properly close DOMContentLoaded event here
+
 // --- 6. PWA Service Worker Registration & Installation Prompt ---
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
