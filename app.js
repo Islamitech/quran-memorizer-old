@@ -411,7 +411,7 @@ function pad3(num) {
     return String(num).padStart(3, '0');
 }
 
-function loadAyah(index) {
+function loadAyah(index, preventPageScroll = false) {
     if (index < 0 || index >= surahAyahs.length) return;
     
     // Stop any playing recitations
@@ -457,7 +457,9 @@ function loadAyah(index) {
     cells.forEach((cell, i) => {
         if (i === index) {
             cell.classList.add('active');
-            cell.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            if (!preventPageScroll) {
+                cell.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
         } else {
             cell.classList.remove('active');
         }
@@ -667,7 +669,7 @@ function onAudioEnded() {
             currentAyahRepeatCount = 0; // Reset for next Ayah
             setTimeout(() => {
                 if (currentAyahIndex < surahAyahs.length - 1) {
-                    loadAyah(currentAyahIndex + 1);
+                    loadAyah(currentAyahIndex + 1, true);
                     playRecitation();
                 } else {
                     // Reached the end of the Surah
@@ -683,7 +685,7 @@ function onAudioEnded() {
         // ONLY Autoplay active: play once and advance
         setTimeout(() => {
             if (currentAyahIndex < surahAyahs.length - 1) {
-                loadAyah(currentAyahIndex + 1);
+                loadAyah(currentAyahIndex + 1, true);
                 playRecitation();
             } else {
                 autoplayMode = false;
