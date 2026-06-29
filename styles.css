@@ -1869,6 +1869,111 @@ body.kids-mode .btn-donate-header:hover {
     box-shadow: 0 8px 20px rgba(244, 63, 94, 0.45);
 }
 
+/* PWA App Installation Button Styling */
+.btn-install-pwa {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(52, 211, 153, 0.15) 100%);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: var(--primary-light);
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-install-pwa:hover {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.25) 0%, rgba(52, 211, 153, 0.25) 100%);
+    border-color: var(--primary);
+    color: #ffffff;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.25);
+    transform: translateY(-2px);
+}
+
+/* Kids mode overrides for header PWA install button */
+body.kids-mode .btn-install-pwa {
+    background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+    color: #ffffff;
+    border: none;
+    box-shadow: 0 6px 15px rgba(16, 185, 129, 0.3);
+}
+body.kids-mode .btn-install-pwa:hover {
+    background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.45);
+}
+
+/* Donation & QR Code Layout */
+.donation-card-layout {
+    display: grid;
+    grid-template-columns: 1.8fr 1.2fr;
+    gap: 24px;
+    margin-top: 10px;
+}
+
+/* Donation Card override */
+.donation-card {
+    background: linear-gradient(135deg, rgba(10, 31, 24, 0.8) 0%, rgba(13, 43, 34, 0.8) 100%);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px dashed rgba(16, 185, 129, 0.3);
+    border-radius: 20px;
+    padding: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    box-shadow: var(--shadow-main);
+}
+
+/* QR Code Sharing Card Styling */
+.qr-sharing-card {
+    background: linear-gradient(135deg, rgba(10, 31, 24, 0.8) 0%, rgba(13, 43, 34, 0.8) 100%);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px dashed rgba(16, 185, 129, 0.3);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: var(--shadow-main);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.qr-content {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+}
+
+.qr-image {
+    width: 110px;
+    height: 110px;
+    border-radius: 12px;
+    border: 3px solid #061f17;
+    background: #040d0a;
+    padding: 6px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.qr-text h4 {
+    font-family: var(--font-title);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--primary-light);
+    margin-bottom: 6px;
+}
+
+.qr-text p {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text-muted);
+}
+
 /* Donation Card Section */
 .donation-section {
     margin-top: 10px;
@@ -2225,7 +2330,34 @@ body.kids-mode .modal-footer p {
     color: #15803d;
 }
 
+body.kids-mode .qr-sharing-card {
+    background: #f0fdf4 !important;
+    background-image: none !important;
+    border: 2px dashed #22c55e !important;
+    box-shadow: 0 10px 25px rgba(34, 197, 94, 0.1) !important;
+}
+
+body.kids-mode .qr-image {
+    border-color: #bbf7d0;
+    background: #ffffff;
+}
+
+body.kids-mode .qr-text h4 {
+    color: #15803d;
+}
+
+body.kids-mode .qr-text p {
+    color: #1e293b;
+}
+
 /* Mobile responsive for donation components */
+@media (max-width: 768px) {
+    .donation-card-layout {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+}
+
 @media (max-width: 600px) {
     .donation-card {
         padding: 20px 16px;
@@ -2251,6 +2383,11 @@ body.kids-mode .modal-footer p {
     
     .method-desc {
         height: auto;
+    }
+    
+    .qr-content {
+        flex-direction: column;
+        text-align: center;
     }
 }
 

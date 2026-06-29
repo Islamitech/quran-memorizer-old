@@ -1794,5 +1794,54 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
+// --- 6. PWA Service Worker Registration & Installation Prompt ---
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+            .then((reg) => console.log('Service Worker Registered successfully', reg.scope))
+            .catch((err) => console.error('Service Worker registration failed', err));
+    });
+}
+
+// A2HS (Add to Home Screen) Install App Logic
+let deferredPrompt;
+const btnInstallApp = document.getElementById('btn-install-app');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    // Prevent Chrome 67 and earlier from automatically showing the prompt
+    e.preventDefault();
+    // Stash the event so it can be triggered later
+    deferredPrompt = e;
+    // Update UI to notify the user they can install the PWA
+    if (btnInstallApp) {
+        btnInstallApp.classList.remove('hidden');
+    }
+});
+
+if (btnInstallApp) {
+    btnInstallApp.addEventListener('click', () => {
+        if (!deferredPrompt) return;
+        // Show the install prompt
+        deferredPrompt.prompt();
+        // Wait for the user to respond to the prompt
+        deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+                console.log('User accepted the install prompt');
+            } else {
+                console.log('User dismissed the install prompt');
+            }
+            deferredPrompt = null;
+            // Hide our custom button again
+            btnInstallApp.classList.add('hidden');
+        });
+    });
+}
+
+// Hide install button when app is already installed
+window.addEventListener('appinstalled', () => {
+    console.log('PWA installed successfully');
+    if (btnInstallApp) {
+        btnInstallApp.classList.add('hidden');
+    }
 });
 
