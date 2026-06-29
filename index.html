@@ -80,6 +80,12 @@
                         <span class="kids-mode-icon">👶</span>
                         <span class="kids-mode-label" id="kids-mode-label">وضع الأطفال</span>
                     </button>
+
+                    <!-- Donate Button -->
+                    <button class="btn-donate-header" id="btn-donate-trigger" title="دعم وتبرع لتطوير المشروع">
+                        <span class="donate-icon">💖</span>
+                        <span>دعم المشروع</span>
+                    </button>
                 </div>
             </div>
             
@@ -316,10 +322,77 @@
             </div>
         </section>
 
+        <!-- 5. Donation Support Section -->
+        <section class="donation-section">
+            <div class="donation-card">
+                <div class="donation-card-content">
+                    <div class="donation-card-icon">💝</div>
+                    <div class="donation-card-text">
+                        <h3>شارك في الأجر والثواب 🌱</h3>
+                        <p>هذا الموقع صدقة جارية ومجاني بالكامل لمساعدة المسلمين وأطفالهم على حفظ كتاب الله. دعمك المالي وتبرعك يساعدنا في دفع تكاليف الاستضافة (Servers) وتطوير وتحديث الموقع باستمرار لإضافة ميزات ذكية جديدة.</p>
+                    </div>
+                </div>
+                <button class="btn btn-primary btn-donate-now" id="btn-donate-card-trigger">
+                    <span>تبرع الآن ودعم المشروع</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </button>
+            </div>
+        </section>
+
         <!-- Footer -->
         <footer class="app-footer">
-            <p>المحفظ الذكي للقرآن الكريم © ٢٠٢٦ - تم التصميم بعناية لتيسير الحفظ والتجويد.</p>
+            <p>محفظ القرآن الكريم © ٢٠٢٦ - تم التصميم بعناية لتيسير الحفظ والتجويد.</p>
         </footer>
+    </div>
+
+    <!-- Donation Modal Popup -->
+    <div class="modal-overlay hidden" id="donation-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>دعم وتطوير منصة محفظ القرآن الكريم</h3>
+                <button class="modal-close-btn" id="btn-close-donation-modal" title="إغلاق">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-motivation">قال رسول الله ﷺ: <strong>"إذا مات ابن آدم انقطع عمله إلا من ثلاث: صدقة جارية، أو علم ينتفع به، أو ولد صالح يدعو له."</strong></p>
+                
+                <div class="payment-methods-grid">
+                    <!-- Method 1: Egypt Mobile Wallets -->
+                    <div class="payment-method-card">
+                        <div class="method-icon">📱</div>
+                        <div class="method-info">
+                            <h4>المحافظ الإلكترونية (مصر)</h4>
+                            <p class="method-desc">يمكنك التحويل عبر فودافون كاش، اتصالات كاش، أورانج كاش أو إنستا باي (InstaPay) للرقم التالي:</p>
+                            <div class="phone-number-box">
+                                <span id="donation-phone">+201143888355</span>
+                                <button class="btn-copy-phone" id="btn-copy-donation-phone" title="نسخ الرقم">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                    <span id="copy-status-text">نسخ</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Method 2: PayPal Global -->
+                    <div class="payment-method-card">
+                        <div class="method-icon">💳</div>
+                        <div class="method-info">
+                            <h4>الدفع العالمي (PayPal)</h4>
+                            <p class="method-desc">للتبرع الآمن من خارج مصر عبر بطاقات الائتمان أو رصيد بايبال:</p>
+                            <a href="https://paypal.me/YOUR_PAYPAL_USERNAME" target="_blank" class="btn-paypal-link" id="paypal-link-button">
+                                <span>التبرع عبر PayPal</span>
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                            </a>
+                            <span class="paypal-note">* سيتم توضيح كيفية ربط رابط بايبال الخاص بك بالزر أدناه.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <p>كتب الله أجركم وضاعف لكم المثوبة وجعلها في ميزان حسناتكم 🤲</p>
+            </div>
+        </div>
     </div>
 
     <!-- Hidden audio element for recitations -->

@@ -1740,3 +1740,59 @@ function floatTo16BitPCM(output, offset, input) {
     }
 }
 
+// --- 5. Donation Modal & Wallet Copy Logic ---
+document.addEventListener('DOMContentLoaded', () => {
+    const donationModal = document.getElementById('donation-modal');
+    const btnDonateTrigger = document.getElementById('btn-donate-trigger');
+    const btnDonateCardTrigger = document.getElementById('btn-donate-card-trigger');
+    const btnCloseDonationModal = document.getElementById('btn-close-donation-modal');
+    const btnCopyDonationPhone = document.getElementById('btn-copy-donation-phone');
+    const donationPhoneText = document.getElementById('donation-phone');
+    const copyStatusText = document.getElementById('copy-status-text');
+
+    // Show modal function
+    function showDonationModal() {
+        donationModal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden'; // Lock background scrolling
+    }
+
+    // Hide modal function
+    function hideDonationModal() {
+        donationModal.classList.add('hidden');
+        document.body.style.overflow = ''; // Unlock background scrolling
+    }
+
+    if (btnDonateTrigger) btnDonateTrigger.addEventListener('click', showDonationModal);
+    if (btnDonateCardTrigger) btnDonateCardTrigger.addEventListener('click', showDonationModal);
+    if (btnCloseDonationModal) btnCloseDonationModal.addEventListener('click', hideDonationModal);
+
+    // Hide modal when clicking outside the card
+    if (donationModal) {
+        donationModal.addEventListener('click', (e) => {
+            if (e.target === donationModal) {
+                hideDonationModal();
+            }
+        });
+    }
+
+    // Copy Phone Number Logic
+    if (btnCopyDonationPhone) {
+        btnCopyDonationPhone.addEventListener('click', () => {
+            const phoneNum = donationPhoneText.textContent.trim();
+            navigator.clipboard.writeText(phoneNum).then(() => {
+                // Success state
+                copyStatusText.textContent = "تم النسخ!";
+                btnCopyDonationPhone.classList.add('copied');
+                
+                // Reset after 2 seconds
+                setTimeout(() => {
+                    copyStatusText.textContent = "نسخ";
+                    btnCopyDonationPhone.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+            });
+        });
+    }
+});
+

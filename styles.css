@@ -1830,5 +1830,415 @@ body.kids-mode .custom-range-slider::-webkit-slider-thumb {
     }
 }
 
+/* --- 6. Donation Banner & Modal Styles --- */
+
+.btn-donate-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(245, 158, 11, 0.15) 100%);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #fca5a5;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-donate-header:hover {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.25) 0%, rgba(245, 158, 11, 0.25) 100%);
+    border-color: #ef4444;
+    color: #ffffff;
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
+    transform: translateY(-2px);
+}
+
+/* Kids mode overrides for header donate button */
+body.kids-mode .btn-donate-header {
+    background: linear-gradient(135deg, #f43f5e 0%, #fb7185 100%);
+    color: #ffffff;
+    border: none;
+    box-shadow: 0 6px 15px rgba(244, 63, 94, 0.3);
+}
+body.kids-mode .btn-donate-header:hover {
+    background: linear-gradient(135deg, #e11d48 0%, #f43f5e 100%);
+    box-shadow: 0 8px 20px rgba(244, 63, 94, 0.45);
+}
+
+/* Donation Card Section */
+.donation-section {
+    margin-top: 10px;
+}
+
+.donation-card {
+    background: linear-gradient(135deg, rgba(10, 31, 24, 0.8) 0%, rgba(13, 43, 34, 0.8) 100%);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px dashed rgba(16, 185, 129, 0.3);
+    border-radius: 20px;
+    padding: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    box-shadow: var(--shadow-main);
+}
+
+.donation-card-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    flex: 1;
+    min-width: 280px;
+}
+
+.donation-card-icon {
+    font-size: 32px;
+    line-height: 1;
+}
+
+.donation-card-text h3 {
+    font-family: var(--font-title);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--primary-light);
+    margin-bottom: 6px;
+}
+
+.donation-card-text p {
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--text-muted);
+}
+
+.btn-donate-now {
+    white-space: nowrap;
+    padding: 14px 24px;
+    font-size: 14px;
+    background: linear-gradient(135deg, #ef4444 0%, #d97706 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);
+}
+
+.btn-donate-now:hover {
+    background: linear-gradient(135deg, #dc2626 0%, #b45309 100%);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.35);
+    transform: translateY(-2px);
+}
+
+/* Modal Overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(4, 13, 10, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    padding: 16px;
+    transition: all 0.3s ease;
+}
+
+.modal-overlay.hidden {
+    display: none;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.modal-card {
+    background: #061914;
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    width: 100%;
+    max-width: 650px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), var(--shadow-glow);
+    overflow: hidden;
+    animation: modal-appear 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modal-appear {
+    from {
+        transform: translateY(20px) scale(0.96);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+.modal-header {
+    background: rgba(16, 185, 129, 0.08);
+    padding: 20px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.modal-header h3 {
+    font-family: var(--font-title);
+    font-size: 18px;
+    color: var(--text-main);
+    font-weight: 700;
+}
+
+.modal-close-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.modal-close-btn:hover {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+}
+
+.modal-body {
+    padding: 24px;
+}
+
+.modal-motivation {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-muted);
+    text-align: center;
+    padding: 16px;
+    border-radius: 12px;
+    background: rgba(16, 185, 129, 0.04);
+    border: 1px solid rgba(16, 185, 129, 0.08);
+    margin-bottom: 24px;
+}
+
+.payment-methods-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.payment-method-card {
+    background: rgba(16, 185, 129, 0.05);
+    border: 1px solid rgba(16, 185, 129, 0.1);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.payment-method-card:hover {
+    border-color: var(--primary-light);
+    background: rgba(16, 185, 129, 0.08);
+    transform: translateY(-2px);
+}
+
+.method-icon {
+    font-size: 32px;
+    margin-bottom: 12px;
+}
+
+.method-info h4 {
+    font-family: var(--font-title);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 8px;
+}
+
+.method-desc {
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    height: 54px; /* Align heights */
+}
+
+.phone-number-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    background: #040e0a;
+    border: 1px solid var(--border-color);
+    padding: 8px 12px;
+    border-radius: 10px;
+    width: 100%;
+}
+
+.phone-number-box span {
+    font-family: var(--font-ui);
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--primary-light);
+    letter-spacing: 0.5px;
+}
+
+.btn-copy-phone {
+    background: var(--primary-glow);
+    border: 1px solid var(--primary);
+    color: var(--text-main);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.2s ease;
+}
+
+.btn-copy-phone:hover {
+    background: var(--primary);
+}
+
+.btn-copy-phone.copied {
+    background: #15803d;
+    border-color: #22c55e;
+}
+
+.btn-paypal-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 10px 16px;
+    background: #0070ba;
+    color: #ffffff;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 112, 186, 0.2);
+}
+
+.btn-paypal-link:hover {
+    background: #005ea6;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 112, 186, 0.35);
+}
+
+.paypal-note {
+    display: block;
+    font-size: 10px;
+    color: #ef4444;
+    margin-top: 10px;
+}
+
+.modal-footer {
+    background: rgba(16, 185, 129, 0.03);
+    padding: 16px 24px;
+    text-align: center;
+    border-top: 1px solid rgba(16, 185, 129, 0.08);
+}
+
+.modal-footer p {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+/* Kids mode overrides for Donation Modal */
+body.kids-mode .modal-card {
+    background: #ffffff;
+    border: 2px solid #22c55e;
+}
+body.kids-mode .modal-header {
+    background: #f0fdf4;
+    border-bottom: 2px solid #bbf7d0;
+}
+body.kids-mode .modal-header h3 {
+    color: #15803d;
+}
+body.kids-mode .modal-motivation {
+    background: #fef3c7;
+    border: 1px solid #fde68a;
+    color: #b45309;
+}
+body.kids-mode .payment-method-card {
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+}
+body.kids-mode .payment-method-card:hover {
+    border-color: #22c55e;
+    background: #f0fdf4;
+}
+body.kids-mode .method-info h4 {
+    color: #334155;
+}
+body.kids-mode .method-desc {
+    color: #64748b;
+}
+body.kids-mode .phone-number-box {
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+}
+body.kids-mode .phone-number-box span {
+    color: #0f172a;
+}
+body.kids-mode .btn-copy-phone {
+    background: #22c55e;
+    border: none;
+}
+body.kids-mode .btn-copy-phone:hover {
+    background: #15803d;
+}
+body.kids-mode .modal-footer {
+    border-top: 2px solid #f1f5f9;
+}
+body.kids-mode .modal-footer p {
+    color: #15803d;
+}
+
+/* Mobile responsive for donation components */
+@media (max-width: 600px) {
+    .donation-card {
+        padding: 20px 16px;
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+    }
+    
+    .donation-card-content {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .btn-donate-now {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .payment-methods-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .method-desc {
+        height: auto;
+    }
+}
+
+
 
 
