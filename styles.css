@@ -2162,9 +2162,10 @@ body.kids-mode .btn-donate-header:hover {
 
 /* Kids mode overrides for Donation Modal */
 body.kids-mode .donation-card {
-    background: #f0fdf4;
-    border: 2px dashed #22c55e;
-    box-shadow: 0 10px 25px rgba(34, 197, 94, 0.1);
+    background: #f0fdf4 !important;
+    background-image: none !important;
+    border: 2px dashed #22c55e !important;
+    box-shadow: 0 10px 25px rgba(34, 197, 94, 0.1) !important;
 }
 body.kids-mode .donation-card-text h3 {
     color: #15803d;
