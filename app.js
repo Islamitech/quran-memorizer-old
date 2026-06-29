@@ -1903,6 +1903,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }).catch(err => {
                 console.error('Failed to copy text: ', err);
             });
+        });
     }
 
     // --- Interactive Promo Tour Carousel Logic ---
