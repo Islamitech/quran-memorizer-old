@@ -19,6 +19,7 @@ let surahAyahs = [];
 let surahTafsir = []; // Caches Tafsir Al-Muyassar
 let currentAyahIndex = 0;
 let reciterAudio = document.getElementById('reciter-audio-element');
+let isChangingAudioSource = false; // Flag to prevent event conflicts during src updates
 let isAudioPlaying = false;
 let loopMode = false;
 let autoplayMode = false; // Auto-play next verse
@@ -480,6 +481,28 @@ function pad3(num) {
     return String(num).padStart(3, '0');
 }
 
+// --- Helper function to update the sticky player bar UI (Global Scope) ---
+function updatePlayerBarInfo() {
+    const playerBarSurah = document.getElementById('player-bar-surah');
+    const playerBarAyah = document.getElementById('player-bar-ayah');
+    
+    if (playerBarSurah && selectedSurahLabel) {
+        // Clean up the text: remove numbers and metadata from name
+        let rawLabel = selectedSurahLabel.textContent.trim();
+        // E.g. "71. سورة نوح (Noah)" -> "سورة نوح"
+        let surahName = rawLabel.replace(/^\d+\.\s*/, '').split('(')[0].trim();
+        playerBarSurah.textContent = surahName;
+    }
+    
+    if (playerBarAyah && surahAyahs[currentAyahIndex]) {
+        const ayahNum = surahAyahs[currentAyahIndex].numberInSurah;
+        // Convert to Arabic digits
+        const arabicDigits = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
+        const ayahNumStr = ayahNum.toString().split('').map(d => arabicDigits[parseInt(d, 10)] || d).join('');
+        playerBarAyah.textContent = `آية رقم ${ayahNumStr}`;
+    }
+}
+
 function updateMediaSession() {
     const selectedSurahLabel = document.getElementById('selected-surah-label');
     const surahNameText = selectedSurahLabel ? (selectedSurahLabel.textContent.split('.')[1]?.trim() || `السورة_${currentSurah}`) : `السورة_${currentSurah}`;
@@ -511,7 +534,7 @@ function updateMediaSession() {
     }
 }
 
-function loadAyah(index, preventPageScroll = false, isContinuousTransition = false) {
+function loadAyah(index, preventPageScroll = false, isContinuousTransition = false, autoPlay = false) {
     if (index < 0 || index >= surahAyahs.length) return;
     
     // Only stop recitation if not in a continuous transition playback
@@ -524,14 +547,11 @@ function loadAyah(index, preventPageScroll = false, isContinuousTransition = fal
     const ayah = surahAyahs[index];
     
     // Determine if we show Basmala
-    // In Al Quran Cloud Uthmani text, Basmala is concatenated at the beginning of the first Ayah
-    // except for Surah 1 (Al-Fatihah) and Surah 9 (At-Tawbah)
     let textToDisplay = ayah.text;
     let basmalaText = "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ";
     
     if (currentSurah !== 1 && currentSurah !== 9 && ayah.numberInSurah === 1) {
         const words = textToDisplay.trim().split(/\s+/);
-        // We verify that the first word starts with the letters of "Bismillah"
         if (words.length >= 4 && (words[0].startsWith("ب") || words[0].startsWith("بِ"))) {
             basmalaText = words.slice(0, 4).join(' ');
             textToDisplay = words.slice(4).join(' ');
@@ -547,7 +567,6 @@ function loadAyah(index, preventPageScroll = false, isContinuousTransition = fal
     }
     
     // Only perform heavy layout / DOM updates if the app is visible to the user
-    // This stops iOS from suspending our JavaScript execution context in background mode!
     if (!document.hidden) {
         // Split into spans for word highlighting
         renderAyahWords(textToDisplay);
@@ -575,8 +594,11 @@ function loadAyah(index, preventPageScroll = false, isContinuousTransition = fal
     // Configure audio source
     const surahStr = pad3(currentSurah);
     const ayahStr = pad3(ayah.numberInSurah);
+    
+    isChangingAudioSource = true;
     reciterAudio.src = `https://everyayah.com/data/${selectedReciter}/${surahStr}${ayahStr}.mp3`;
     reciterAudio.load();
+    setTimeout(() => { isChangingAudioSource = false; }, 250);
     
     // Reset Karaoke State
     wordSegments = [];
@@ -586,6 +608,45 @@ function loadAyah(index, preventPageScroll = false, isContinuousTransition = fal
     
     // Sync modern sticky player information elements
     updatePlayerBarInfo();
+    
+    // Handle AutoPlay if requested during continuous transition
+    if (autoPlay) {
+        const executePlay = () => {
+            reciterAudio.play()
+                .then(() => {
+                    isAudioPlaying = true;
+                    btnListen.classList.add('active');
+                    btnListen.querySelector('.icon-play').classList.add('hidden');
+                    btnListen.querySelector('.icon-pause').classList.remove('hidden');
+                    startHighlightLoop();
+                    updateMediaSession();
+                })
+                .catch(err => {
+                    console.error('AutoPlay execution failed, retrying next frame:', err);
+                    setTimeout(() => {
+                        reciterAudio.play()
+                            .then(() => {
+                                isAudioPlaying = true;
+                                btnListen.classList.add('active');
+                                btnListen.querySelector('.icon-play').classList.add('hidden');
+                                btnListen.querySelector('.icon-pause').classList.remove('hidden');
+                                startHighlightLoop();
+                                updateMediaSession();
+                            })
+                            .catch(e => console.error('Continuous playback failed on fallback:', e));
+                    }, 100);
+                });
+        };
+        
+        if (reciterAudio.readyState >= 2) {
+            executePlay();
+        } else {
+            reciterAudio.addEventListener('canplay', function playHandler() {
+                reciterAudio.removeEventListener('canplay', playHandler);
+                executePlay();
+            }, { once: true });
+        }
+    }
 }
 
 // Automatically sync and rebuild Quran text, Tafsir and navigation layout when returning to foreground
@@ -820,6 +881,12 @@ function onAudioTimeUpdate() {
 }
 
 function onAudioEnded() {
+    // Ignore ended events triggered during active source swaps (e.g., Safari / mobile browsers)
+    if (isChangingAudioSource) {
+        console.log("onAudioEnded event ignored - audio source swap in progress");
+        return;
+    }
+
     // Determine if we should continue playing next or repeat
     let willContinue = false;
     
@@ -836,7 +903,6 @@ function onAudioEnded() {
     }
     
     if (willContinue) {
-        // We will continue: DO NOT call pauseRecitation() to prevent visual/audio stuttering
         if (loopMode && autoplayMode) {
             currentAyahRepeatCount++;
             if (currentAyahRepeatCount < 3) {
@@ -848,10 +914,8 @@ function onAudioEnded() {
             } else {
                 currentAyahRepeatCount = 0;
                 if (currentAyahIndex < surahAyahs.length - 1) {
-                    loadAyah(currentAyahIndex + 1, true, true); // true, true = prevent scroll, isContinuous
-                    reciterAudio.play()
-                        .then(updateMediaSession)
-                        .catch(err => console.error('Continuous play next failed:', err));
+                    // loadAyah(index, preventPageScroll, isContinuous, autoPlay) -> set autoPlay to true!
+                    loadAyah(currentAyahIndex + 1, true, true, true); 
                 }
             }
         } else if (loopMode) {
@@ -863,10 +927,8 @@ function onAudioEnded() {
         } else if (autoplayMode) {
             // Play next Ayah
             if (currentAyahIndex < surahAyahs.length - 1) {
-                loadAyah(currentAyahIndex + 1, true, true); // true, true = prevent scroll, isContinuous
-                reciterAudio.play()
-                    .then(updateMediaSession)
-                    .catch(err => console.error('Continuous autoplay next failed:', err));
+                // loadAyah(index, preventPageScroll, isContinuous, autoPlay) -> set autoPlay to true!
+                loadAyah(currentAyahIndex + 1, true, true, true); 
             }
         }
     } else {
@@ -2326,28 +2388,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error("Failed to start listening playlist playback:", err);
             }
         });
-    }
-
-    // --- Helper function to update the sticky player bar UI ---
-    window.updatePlayerBarInfo = function() {
-        const playerBarSurah = document.getElementById('player-bar-surah');
-        const playerBarAyah = document.getElementById('player-bar-ayah');
-        
-        if (playerBarSurah && selectedSurahLabel) {
-            // Clean up the text: remove numbers and metadata from name
-            let rawLabel = selectedSurahLabel.textContent.trim();
-            // E.g. "71. سورة نوح (Noah)" -> "سورة نوح"
-            let surahName = rawLabel.replace(/^\d+\.\s*/, '').split('(')[0].trim();
-            playerBarSurah.textContent = surahName;
-        }
-        
-        if (playerBarAyah && surahAyahs[currentAyahIndex]) {
-            const ayahNum = surahAyahs[currentAyahIndex].numberInSurah;
-            // Convert to Arabic digits
-            const arabicDigits = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
-            const ayahNumStr = ayahNum.toString().split('').map(d => arabicDigits[parseInt(d, 10)] || d).join('');
-            playerBarAyah.textContent = `آية رقم ${ayahNumStr}`;
-        }
     }
 }); // Properly close DOMContentLoaded event here
 
