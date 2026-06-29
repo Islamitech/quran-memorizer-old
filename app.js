@@ -462,43 +462,48 @@ function loadAyah(index, preventPageScroll = false, isContinuousTransition = fal
     
     if (currentSurah !== 1 && currentSurah !== 9 && ayah.numberInSurah === 1) {
         const words = textToDisplay.trim().split(/\s+/);
-        // In Uthmani script, the Basmala is exactly the first 4 words.
-        // We verify that the first word starts with the letters of "Bismillah" (like ب or بِ)
+        // We verify that the first word starts with the letters of "Bismillah"
         if (words.length >= 4 && (words[0].startsWith("ب") || words[0].startsWith("بِ"))) {
             basmalaText = words.slice(0, 4).join(' ');
             textToDisplay = words.slice(4).join(' ');
-            basmalaContainer.textContent = basmalaText;
-            basmalaContainer.classList.remove('hidden');
-        } else {
-            basmalaContainer.classList.add('hidden');
-        }
-    } else {
-        basmalaContainer.classList.add('hidden');
-    }
-    
-    // Split into spans for word highlighting
-    renderAyahWords(textToDisplay);
-    
-    // Update Tafsir text
-    updateTafsirText();
-    
-    // Update navigation numbers
-    ayahIndexText.textContent = `آية: ${ayah.numberInSurah} / ${surahAyahs.length}`;
-    
-    // Highlight active cell in index grid
-    const cells = document.querySelectorAll('.ayah-grid-cell');
-    cells.forEach((cell, i) => {
-        if (i === index) {
-            cell.classList.add('active');
-            if (!preventPageScroll) {
-                cell.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            if (!document.hidden) {
+                basmalaContainer.textContent = basmalaText;
+                basmalaContainer.classList.remove('hidden');
             }
         } else {
-            cell.classList.remove('active');
+            if (!document.hidden) basmalaContainer.classList.add('hidden');
         }
-    });
+    } else {
+        if (!document.hidden) basmalaContainer.classList.add('hidden');
+    }
     
-    // Configure audio source for Sheikh Fares Abbad
+    // Only perform heavy layout / DOM updates if the app is visible to the user
+    // This stops iOS from suspending our JavaScript execution context in background mode!
+    if (!document.hidden) {
+        // Split into spans for word highlighting
+        renderAyahWords(textToDisplay);
+        
+        // Update Tafsir text
+        updateTafsirText();
+        
+        // Update navigation numbers
+        ayahIndexText.textContent = `آية: ${ayah.numberInSurah} / ${surahAyahs.length}`;
+        
+        // Highlight active cell in index grid
+        const cells = document.querySelectorAll('.ayah-grid-cell');
+        cells.forEach((cell, i) => {
+            if (i === index) {
+                cell.classList.add('active');
+                if (!preventPageScroll) {
+                    cell.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            } else {
+                cell.classList.remove('active');
+            }
+        });
+    }
+    
+    // Configure audio source
     const surahStr = pad3(currentSurah);
     const ayahStr = pad3(ayah.numberInSurah);
     reciterAudio.src = `https://everyayah.com/data/${selectedReciter}/${surahStr}${ayahStr}.mp3`;
@@ -510,6 +515,51 @@ function loadAyah(index, preventPageScroll = false, isContinuousTransition = fal
     // Check if user has a recorded audio file for this Ayah
     loadUserRecordingForAyah();
 }
+
+// Automatically sync and rebuild Quran text, Tafsir and navigation layout when returning to foreground
+document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && surahAyahs.length > 0 && currentAyahIndex >= 0) {
+        const index = currentAyahIndex;
+        const ayah = surahAyahs[index];
+        
+        let textToDisplay = ayah.text;
+        let basmalaText = "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ";
+        
+        if (currentSurah !== 1 && currentSurah !== 9 && ayah.numberInSurah === 1) {
+            const words = textToDisplay.trim().split(/\s+/);
+            if (words.length >= 4 && (words[0].startsWith("ب") || words[0].startsWith("بِ"))) {
+                basmalaText = words.slice(0, 4).join(' ');
+                textToDisplay = words.slice(4).join(' ');
+                basmalaContainer.textContent = basmalaText;
+                basmalaContainer.classList.remove('hidden');
+            } else {
+                basmalaContainer.classList.add('hidden');
+            }
+        } else {
+            basmalaContainer.classList.add('hidden');
+        }
+        
+        // Re-render layout elements
+        renderAyahWords(textToDisplay);
+        updateTafsirText();
+        ayahIndexText.textContent = `آية: ${ayah.numberInSurah} / ${surahAyahs.length}`;
+        
+        const cells = document.querySelectorAll('.ayah-grid-cell');
+        cells.forEach((cell, i) => {
+            if (i === index) {
+                cell.classList.add('active');
+                cell.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            } else {
+                cell.classList.remove('active');
+            }
+        });
+        
+        // Resume UI karaoke rendering if actively playing
+        if (isAudioPlaying) {
+            startHighlightLoop();
+        }
+    }
+});
 
 function renderAyahWords(text) {
     quranTextContainer.innerHTML = '';
