@@ -44,40 +44,6 @@
                     <h1>محفظ القرآن الكريم <span class="kids-emoji">🤲</span></h1>
                 </div>
                 <div class="header-actions">
-                    <!-- Reciter Selector -->
-                    <div class="reciter-selector">
-                        <label for="reciter-select">القارئ:</label>
-                        <select id="reciter-select">
-                            <option value="Fares_Abbad_64kbps" selected>فارس عباد</option>
-                            <option value="Alafasy_64kbps">مشاري العفاسي</option>
-                            <option value="Abdul_Basit_Murattal_64kbps">عبد الباسط عبد الصمد (مرتل)</option>
-                            <option value="Minshawy_Murattal_128kbps">محمد صديق المنشاوي (مرتل)</option>
-                            <option value="Minshawy_Teacher_128kbps">محمد صديق المنشاوي (المعلم 🧑‍🏫)</option>
-                            <option value="Husary_64kbps">محمود خليل الحصري (مرتل)</option>
-                            <option value="Husary_Muallim_128kbps">محمود خليل الحصري (المعلم 🧑‍🏫)</option>
-                            <option value="Abdurrahmaan_As-Sudais_64kbps">عبد الرحمن السديس</option>
-                            <option value="Maher_AlMuaiqly_64kbps">ماهر المعيقلي</option>
-                            <option value="khalefa_al_tunaiji_64kbps">خليفة الطنيجي (المعلم للأطفال 🧒)</option>
-                        </select>
-                    </div>
-
-                    <!-- Surah Search Select -->
-                    <div class="search-select-container" id="surah-search-select">
-                        <div class="search-select-trigger" id="surah-select-trigger">
-                            <span id="selected-surah-label">اختر سورة...</span>
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-                        </div>
-                        <div class="search-select-dropdown hidden" id="surah-select-dropdown">
-                            <div class="search-select-search-box">
-                                <input type="text" id="surah-search-input" placeholder="ابحث باسم السورة أو رقمها..." autocomplete="off">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                            </div>
-                            <div class="search-select-options-list" id="surah-options-list">
-                                <!-- Options will be dynamically injected here -->
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- Kids Mode Toggle -->
                     <button class="btn-toggle-kids" id="btn-kids-mode-toggle" title="تفعيل وضع الأطفال">
                         <span class="kids-mode-icon">👶</span>
@@ -229,11 +195,16 @@
                             <label class="field-label">صوت القارئ الشيخ:</label>
                             <div class="reciter-dropdown-container">
                                 <select id="reciter-select" class="custom-reciter-select">
-                                    <option value="Fares_Abbad_64kbps">الشيخ فارس عباد</option>
-                                    <option value="Husary_64kbps">الشيخ محمود خليل الحصري</option>
-                                    <option value="Minshawy_Teacher_128kbps">الشيخ محمد صديق المنشاوي (المعلم)</option>
-                                    <option value="Abdul_Basit_Murattal_64kbps">الشيخ عبد الباسط عبد الصمد</option>
-                                    <option value="Ghamadi_40kbps">الشيخ سعد الغامدي</option>
+                                    <option value="Fares_Abbad_64kbps" selected>الشيخ فارس عباد</option>
+                                    <option value="Alafasy_64kbps">الشيخ مشاري العفاسي</option>
+                                    <option value="Abdul_Basit_Murattal_64kbps">الشيخ عبد الباسط عبد الصمد (مرتل)</option>
+                                    <option value="Minshawy_Murattal_128kbps">الشيخ محمد صديق المنشاوي (مرتل)</option>
+                                    <option value="Minshawy_Teacher_128kbps">الشيخ محمد صديق المنشاوي (المعلم 🧑‍🏫)</option>
+                                    <option value="Husary_64kbps">الشيخ محمود خليل الحصري (مرتل)</option>
+                                    <option value="Husary_Muallim_128kbps">الشيخ محمود خليل الحصري (المعلم 🧑‍🏫)</option>
+                                    <option value="Abdurrahmaan_As-Sudais_64kbps">الشيخ عبد الرحمن السديس</option>
+                                    <option value="Maher_AlMuaiqly_64kbps">الشيخ ماهر المعيقلي</option>
+                                    <option value="khalefa_al_tunaiji_64kbps">الشيخ خليفة الطنيجي (المعلم للأطفال 🧒)</option>
                                 </select>
                             </div>
                         </div>
