@@ -2096,11 +2096,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const listeningSelectedCount = document.getElementById('listening-selected-count');
     const listeningQueuePreview = document.getElementById('listening-queue-preview');
     const listeningSurahGrid = document.getElementById('listening-surah-grid');
+    const listeningSearchInput = document.getElementById('listening-search-input');
 
     function showListeningModal() {
         if (listeningModal) {
             listeningModal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
+            
+            // Reset search input on open
+            if (listeningSearchInput) {
+                listeningSearchInput.value = '';
+            }
+            if (listeningSurahGrid) {
+                const labels = listeningSurahGrid.querySelectorAll('.playlist-checkbox-label');
+                labels.forEach(label => label.classList.remove('hidden'));
+            }
+            
             updateListeningPlaylistQueuePreview();
         }
     }
@@ -2110,6 +2121,24 @@ document.addEventListener('DOMContentLoaded', () => {
             listeningModal.classList.add('hidden');
             document.body.style.overflow = '';
         }
+    }
+
+    // Dynamic Search Filter for Surah Checklist
+    if (listeningSearchInput) {
+        listeningSearchInput.addEventListener('input', () => {
+            if (!listeningSurahGrid) return;
+            const query = normalizeArabic(listeningSearchInput.value.trim());
+            const labels = listeningSurahGrid.querySelectorAll('.playlist-checkbox-label');
+            
+            labels.forEach(label => {
+                const text = normalizeArabic(label.textContent);
+                if (text.includes(query)) {
+                    label.classList.remove('hidden');
+                } else {
+                    label.classList.add('hidden');
+                }
+            });
+        });
     }
 
     // Update the counter and textual list of checked surahs
