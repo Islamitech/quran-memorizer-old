@@ -412,7 +412,10 @@ function pad3(num) {
 }
 
 function updateMediaSession() {
-    if ('mediaSession' in navigator && currentSurahName && surahAyahs.length > 0 && currentAyahIndex >= 0) {
+    const selectedSurahLabel = document.getElementById('selected-surah-label');
+    const surahNameText = selectedSurahLabel ? (selectedSurahLabel.textContent.split('.')[1]?.trim() || `السورة_${currentSurah}`) : `السورة_${currentSurah}`;
+    
+    if ('mediaSession' in navigator && surahAyahs.length > 0 && currentAyahIndex >= 0) {
         const ayah = surahAyahs[currentAyahIndex];
         const reciterName = reciterSelect.options[reciterSelect.selectedIndex].text;
         
@@ -422,7 +425,7 @@ function updateMediaSession() {
         const artworkUrl512 = new URL('icon-512.png', host).href;
         
         navigator.mediaSession.metadata = new MediaMetadata({
-            title: `سورة ${currentSurahName} - الآية ${ayah.numberInSurah}`,
+            title: `سورة ${surahNameText} - الآية ${ayah.numberInSurah}`,
             artist: `بصوت القارئ ${reciterName}`,
             album: 'محفظ القرآن الكريم',
             artwork: [
