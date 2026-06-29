@@ -392,18 +392,35 @@ async function loadSurah(surahNum) {
     quranTextContainer.innerHTML = '<div class="empty-state-text">جاري تحميل آيات السورة والتفسير...</div>';
     basmalaContainer.classList.add('hidden');
     
+    const maxRetries = 3;
+    let attempt = 0;
+    let success = false;
+    let json = null;
+    
+    while (attempt < maxRetries && !success) {
+        try {
+            attempt++;
+            const response = await fetch(`https://api.alquran.cloud/v1/surah/${surahNum}/editions/quran-uthmani,ar.muyassar`);
+            if (!response.ok) throw new Error('فشل تحميل السورة أو التفسير');
+            json = await response.json();
+            success = true;
+        } catch (err) {
+            console.warn(`Attempt ${attempt} to fetch Surah failed:`, err);
+            if (attempt >= maxRetries) {
+                // If all retries fail, throw the error to be caught by the outer block
+                throw err;
+            }
+            // Wait 1.5 seconds before retrying
+            await new Promise(resolve => setTimeout(resolve, 1500));
+        }
+    }
+    
     try {
-        // Fetch Surah Uthmani text and Tafsir Al-Muyassar combined in a single request
-        const response = await fetch(`https://api.alquran.cloud/v1/surah/${surahNum}/editions/quran-uthmani,ar.muyassar`);
-        if (!response.ok) throw new Error('فشل تحميل السورة أو التفسير');
-        
-        const json = await response.json();
-        
         // Find which index corresponds to which edition
         let uthmaniData = null;
         let muyassarData = null;
         
-        if (json.data && json.data.length >= 2) {
+        if (json && json.data && json.data.length >= 2) {
             json.data.forEach(item => {
                 if (item.edition.identifier === 'quran-uthmani') {
                     uthmaniData = item;
@@ -414,8 +431,12 @@ async function loadSurah(surahNum) {
         }
         
         // Fallback in case list structure varies
-        if (!uthmaniData) uthmaniData = json.data[0];
-        if (!muyassarData) muyassarData = json.data[1] || json.data[0];
+        if (!uthmaniData && json) uthmaniData = json.data[0];
+        if (!muyassarData && json) muyassarData = json.data[1] || json.data[0];
+        
+        if (!uthmaniData || !muyassarData) {
+            throw new Error('بيانات السورة غير مكتملة');
+        }
         
         surahAyahs = uthmaniData.ayahs;
         surahTafsir = muyassarData.ayahs;
@@ -434,7 +455,19 @@ async function loadSurah(surahNum) {
         updateProgressTracker();
     } catch (err) {
         console.error('Error loading surah:', err);
-        quranTextContainer.textContent = 'حدث خطأ أثناء تحميل آيات السورة والتفسير. يرجى المحاولة مرة أخرى.';
+        quranTextContainer.innerHTML = `
+            <div class="empty-state-text error-state">
+                <p>حدث خطأ أثناء تحميل آيات السورة والتفسير. يرجى التأكد من اتصال الإنترنت وإعادة المحاولة.</p>
+                <button class="btn btn-primary" id="btn-retry-load-surah" style="margin-top: 14px; padding: 8px 16px; font-size: 13px; border-radius: 8px;">
+                    🔄 إعادة محاولة التحميل
+                </button>
+            </div>
+        `;
+        
+        const btnRetry = document.getElementById('btn-retry-load-surah');
+        if (btnRetry) {
+            btnRetry.addEventListener('click', () => loadSurah(surahNum));
+        }
     }
 }
 
