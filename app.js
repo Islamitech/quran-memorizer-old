@@ -546,6 +546,9 @@ function loadAyah(index, preventPageScroll = false, isContinuousTransition = fal
     
     // Check if user has a recorded audio file for this Ayah
     loadUserRecordingForAyah();
+    
+    // Sync modern sticky player information elements
+    updatePlayerBarInfo();
 }
 
 // Automatically sync and rebuild Quran text, Tafsir and navigation layout when returning to foreground
@@ -2286,6 +2289,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error("Failed to start listening playlist playback:", err);
             }
         });
+    }
+
+    // --- Helper function to update the sticky player bar UI ---
+    window.updatePlayerBarInfo = function() {
+        const playerBarSurah = document.getElementById('player-bar-surah');
+        const playerBarAyah = document.getElementById('player-bar-ayah');
+        
+        if (playerBarSurah && selectedSurahLabel) {
+            // Clean up the text: remove numbers and metadata from name
+            let rawLabel = selectedSurahLabel.textContent.trim();
+            // E.g. "71. سورة نوح (Noah)" -> "سورة نوح"
+            let surahName = rawLabel.replace(/^\d+\.\s*/, '').split('(')[0].trim();
+            playerBarSurah.textContent = surahName;
+        }
+        
+        if (playerBarAyah && surahAyahs[currentAyahIndex]) {
+            const ayahNum = surahAyahs[currentAyahIndex].numberInSurah;
+            // Convert to Arabic digits
+            const arabicDigits = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
+            const ayahNumStr = ayahNum.toString().split('').map(d => arabicDigits[parseInt(d, 10)] || d).join('');
+            playerBarAyah.textContent = `آية رقم ${ayahNumStr}`;
+        }
     }
 }); // Properly close DOMContentLoaded event here
 
