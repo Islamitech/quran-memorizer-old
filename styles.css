@@ -29,6 +29,8 @@
     --font-quran: 'Amiri', Georgia, serif;
     --font-title: 'Cairo', system-ui, -apple-system, sans-serif;
     --font-ui: 'Cairo', 'Montserrat', system-ui, sans-serif;
+    --font-main: 'Cairo', 'Montserrat', system-ui, sans-serif;
+    --primary-hover: #059669;
     --border-radius-lg: 18px;
     --border-radius-md: 12px;
 }
@@ -549,16 +551,23 @@ body.kids-mode .custom-reciter-select:focus {
     transform: scale(1.08);
 }
 
-/* Blur Filter for check mode */
-.ayah-text.blurred {
+/* Blur Filter for check mode - applied to individual words */
+.ayah-text.blurred .quran-word {
     filter: blur(8px);
     user-select: none;
     cursor: pointer;
+    transition: filter 0.3s ease, color 0.3s ease, text-shadow 0.3s ease;
 }
 
-/* Reveal temporarily when user clicks */
-.ayah-text.blurred:active,
-.ayah-text.blurred.reveal-temp {
+/* Reveal individual words when matched by speech recognition */
+.ayah-text.blurred .quran-word.revealed {
+    filter: blur(0px) !important;
+    color: var(--accent) !important;
+}
+
+/* Reveal temporarily when user clicks/presses the container */
+.ayah-text.blurred:active .quran-word,
+.ayah-text.blurred.reveal-temp .quran-word {
     filter: blur(0px);
 }
 

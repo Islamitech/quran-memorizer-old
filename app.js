@@ -29,6 +29,10 @@ let showTafsir = false;
 let wordSegments = [];
 let highlightAnimationFrameId = null;
 
+// Speech Recognition Globals
+let recognition = null;
+let speechSessionActive = false;
+
 // Playlist Listening Mode State
 let isListeningPlaylistMode = false;
 let listeningPlaylistQueue = [];
@@ -265,6 +269,13 @@ function setupEventHandlers() {
     reciterAudio.addEventListener('loadedmetadata', onAudioMetadataLoaded);
     reciterAudio.addEventListener('timeupdate', onAudioTimeUpdate);
     reciterAudio.addEventListener('ended', onAudioEnded);
+    reciterAudio.addEventListener('error', (e) => {
+        console.error("Reciter audio loading error:", e);
+        if (isAudioPlaying) {
+            pauseRecitation();
+            alert("تعذر تحميل تلاوة الآية. يرجى التحقق من اتصال الإنترنت وتجربة إعادة التشغيل.");
+        }
+    });
     
     // Recording controls
     btnRecordMain.addEventListener('click', toggleRecording);
@@ -388,7 +399,7 @@ async function fetchSurahsList() {
     }
 }
 
-async function loadSurah(surahNum) {
+async function loadSurah(surahNum, autoPlay = false) {
     currentSurah = surahNum;
     quranTextContainer.innerHTML = '<div class="empty-state-text">جاري تحميل آيات السورة والتفسير...</div>';
     basmalaContainer.classList.add('hidden');
@@ -447,7 +458,7 @@ async function loadSurah(surahNum) {
         currentAyahIndex = 0;
         
         // Load the first Ayah
-        loadAyah(0);
+        loadAyah(0, false, false, autoPlay);
         
         // Draw Surah Index Directory Grid
         renderIndexGrid();
@@ -940,8 +951,8 @@ function onAudioEnded() {
             // Show loading state
             quranTextContainer.innerHTML = `<div class="empty-state-text">جاري الانتقال التلقائي للسورة التالية بقائمتك...</div>`;
             
-            // Load the next Surah and then play its first ayah automatically
-            loadSurah(nextSurahNum).then(() => {
+            // Load the next Surah with autoPlay=true to play its first ayah automatically
+            loadSurah(nextSurahNum, true).then(() => {
                 // Update active state in select dropdown UI
                 surahOptionsList.querySelectorAll('.search-select-option').forEach(o => {
                     o.classList.toggle('active', parseInt(o.dataset.value, 10) === nextSurahNum);
@@ -951,9 +962,6 @@ function onAudioEnded() {
                 if (activeOption) {
                     selectedSurahLabel.textContent = activeOption.textContent.trim();
                 }
-                
-                // Play immediately
-                playRecitation();
             }).catch(err => {
                 console.error('Failed to load next playlist Surah:', err);
                 pauseRecitation();
@@ -1027,6 +1035,18 @@ async function startRecording() {
         
         // Start recording
         mediaRecorder.start();
+        
+        // Start Speech Recognition for matching transcript
+        try {
+            if (!recognition) {
+                initSpeechRecognition();
+            }
+            if (recognition && !speechSessionActive) {
+                recognition.start();
+            }
+        } catch (e) {
+            console.warn("Failed to start speech recognition session:", e);
+        }
         
         // Start Timer
         recordSeconds = 0;
@@ -1149,6 +1169,15 @@ function createReverbImpulseResponse(duration, decay) {
 }
 
 function stopRecording() {
+    // Stop Speech Recognition
+    try {
+        if (recognition) {
+            recognition.stop();
+        }
+    } catch (e) {
+        console.warn("Failed to stop speech recognition session:", e);
+    }
+
     if (mediaRecorder && mediaRecorder.state === 'recording') {
         mediaRecorder.stop();
     }
@@ -1183,6 +1212,126 @@ function disconnectNodes() {
     } catch (e) {
         console.warn('Node disconnect error:', e);
     }
+}
+
+function initSpeechRecognition() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+        console.warn("Speech Recognition API is not supported in this browser.");
+        return;
+    }
+    
+    recognition = new SpeechRecognition();
+    recognition.lang = 'ar-SA'; // Arabic (Saudi Arabia)
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    
+    recognition.onstart = () => {
+        speechSessionActive = true;
+        console.log("Speech recognition session started.");
+    };
+    
+    recognition.onresult = (event) => {
+        let interimTranscript = "";
+        let finalTranscript = "";
+        
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+            if (event.results[i].isFinal) {
+                finalTranscript += event.results[i][0].transcript;
+            } else {
+                interimTranscript += event.results[i][0].transcript;
+            }
+        }
+        
+        const fullTranscript = (finalTranscript + " " + interimTranscript).trim();
+        if (fullTranscript) {
+            matchSpokenWords(fullTranscript);
+        }
+    };
+    
+    recognition.onerror = (event) => {
+        console.warn("Speech recognition error:", event.error);
+    };
+    
+    recognition.onend = () => {
+        speechSessionActive = false;
+        console.log("Speech recognition session ended.");
+        // Auto-restart if user is still recording
+        if (mediaRecorder && mediaRecorder.state === 'recording') {
+            try {
+                recognition.start();
+            } catch (e) {
+                console.warn("Failed to auto-restart speech recognition:", e);
+            }
+        }
+    };
+}
+
+function matchSpokenWords(transcript) {
+    if (!quranTextContainer) return;
+    const wordSpans = quranTextContainer.querySelectorAll('.quran-word');
+    if (wordSpans.length === 0) return;
+    
+    const normalizedTranscript = normalizeArabic(transcript);
+    const spokenWords = normalizedTranscript.split(/\s+/).filter(w => w.length > 0);
+    
+    let spokenIdx = 0;
+    wordSpans.forEach((span, targetIdx) => {
+        const targetWord = normalizeArabic(span.textContent);
+        
+        // Look ahead in spoken words (up to 6 words) to find matches, ignoring errors
+        let found = false;
+        for (let i = Math.max(0, spokenIdx - 2); i < Math.min(spokenWords.length, spokenIdx + 6); i++) {
+            if (spokenWords[i] === targetWord || isWordHighlySimilar(spokenWords[i], targetWord)) {
+                found = true;
+                spokenIdx = i + 1; // Move index forward
+                break;
+            }
+        }
+        
+        if (found) {
+            span.classList.add('revealed');
+            // Playful feedback inside kids mode
+            if (document.body.classList.contains('kids-mode')) {
+                span.style.color = '#10b981'; // Green on match
+                span.style.textShadow = '0 0 8px rgba(16, 185, 129, 0.4)';
+            }
+        }
+    });
+    
+    // Check match completion
+    const revealedCount = quranTextContainer.querySelectorAll('.quran-word.revealed').length;
+    const ratio = revealedCount / wordSpans.length;
+    
+    if (ratio >= 0.8) {
+        recordStatus.textContent = `تسميع ممتاز! نسبة المطابقة: ${Math.round(ratio * 100)}% ✨`;
+        recordStatus.style.color = 'var(--accent)';
+    } else if (ratio > 0) {
+        recordStatus.textContent = `جاري التسميع... نسبة المطابقة: ${Math.round(ratio * 100)}%`;
+        recordStatus.style.color = 'var(--text-main)';
+    }
+}
+
+function isWordHighlySimilar(w1, w2) {
+    if (!w1 || !w2) return false;
+    if (w1 === w2) return true;
+    
+    // Short words must match exactly
+    if (w1.length < 3 || w2.length < 3) return false;
+    
+    // Contains check
+    if (w1.includes(w2) || w2.includes(w1)) return true;
+    
+    // Character-level overlap check (min 75% match)
+    let commonChars = 0;
+    const set1 = new Set(w1.split(''));
+    const set2 = new Set(w2.split(''));
+    set1.forEach(char => {
+        if (set2.has(char)) commonChars++;
+    });
+    
+    const similarity = commonChars / Math.max(w1.length, w2.length);
+    return similarity >= 0.75;
 }
 
 function updateRecordTimer() {
@@ -2372,7 +2521,7 @@ document.addEventListener('DOMContentLoaded', () => {
             quranTextContainer.innerHTML = `<div class="empty-state-text">جاري بدء تشغيل السورة الأولى بقائمة الاستماع...</div>`;
             
             try {
-                await loadSurah(firstSurah);
+                await loadSurah(firstSurah, true);
                 // Update dropdown active item
                 surahOptionsList.querySelectorAll('.search-select-option').forEach(o => {
                     o.classList.toggle('active', parseInt(o.dataset.value, 10) === firstSurah);
@@ -2382,9 +2531,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (activeOption) {
                     selectedSurahLabel.textContent = activeOption.textContent.trim();
                 }
-                
-                // Play immediately
-                playRecitation();
             } catch (err) {
                 console.error("Failed to start listening playlist playback:", err);
             }

@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>محفّظ القرآن الكريم - منصة ذكية لحفظ وتسميع القرآن</title>
+    <meta name="description" content="منصة محفّظ القرآن الكريم - أداة ذكية ومجانية تساعدك على حفظ القرآن الكريم مع خاصية الكاراوكي الذكي والتسميع الصوتي ووضع الاستماع المتتالي">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* === CSS Reset & Base === */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-primary: #0a1a14;
+            --bg-secondary: #0d2818;
+            --bg-card: rgba(15, 45, 30, 0.6);
+            --accent: #00e676;
+            --accent-gold: #ffd700;
+            --accent-glow: rgba(0, 230, 118, 0.3);
+            --text-primary: #e8f5e9;
+            --text-secondary: #a5d6a7;
+            --gradient-main: linear-gradient(135deg, #0a1a14 0%, #1b5e20 50%, #0a1a14 100%);
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.8;
+        }
+
+        /* === Animated Background Particles === */
+        .particles {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px; height: 4px;
+            background: var(--accent);
+            border-radius: 50%;
+            opacity: 0;
+            animation: float-particle 8s infinite ease-in-out;
+        }
+
+        @keyframes float-particle {
+            0% { opacity: 0; transform: translateY(100vh) scale(0); }
+            20% { opacity: 0.6; }
+            80% { opacity: 0.3; }
+            100% { opacity: 0; transform: translateY(-20vh) scale(1.5); }
+        }
+
+        /* === Navigation === */
+        .navbar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            padding: 1rem 2rem;
+            background: rgba(10, 26, 20, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 230, 118, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.4s ease;
+        }
+
+        .navbar.scrolled {
+            padding: 0.6rem 2rem;
+            background: rgba(10, 26, 20, 0.95);
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .nav-logo .logo-icon {
+            width: 40px; height: 40px;
+            background: linear-gradient(135deg, var(--accent), #00c853);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px; left: 0;
+            width: 0; height: 2px;
+            background: var(--accent);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover { color: var(--accent); }
+        .nav-links a:hover::after { width: 100%; }
+
+        .nav-cta {
+            background: linear-gradient(135deg, var(--accent), #00c853) !important;
+            color: var(--bg-primary) !important;
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 700 !important;
+            transition: transform 0.3s, box-shadow 0.3s !important;
+        }
+
+        .nav-cta:hover {
+            transform: scale(1.05) !important;
+            box-shadow: 0 0 25px var(--accent-glow) !important;
+        }
+
+        .nav-cta::after { display: none !important; }
+
+        /* === Hero Section === */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            padding: 6rem 2rem 4rem;
+            background: var(--gradient-main);
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url('promo-assets/hero-bg.jpg') center/cover no-repeat;
+            opacity: 0.15;
+            z-index: 0;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; width: 100%; height: 40%;
+            background: linear-gradient(to top, var(--bg-primary), transparent);
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 900px;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(0, 230, 118, 0.1);
+            border: 1px solid rgba(0, 230, 118, 0.3);
+            color: var(--accent);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 2rem;
+            animation: fadeInDown 1s ease;
+        }
+
+        .hero h1 {
+            font-family: 'Amiri', serif;
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 700;
+            line-height: 1.3;
+            margin-bottom: 1.5rem;
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+
+        .hero h1 .highlight {
+            background: linear-gradient(135deg, var(--accent), var(--accent-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: clamp(1rem, 2.5vw, 1.3rem);
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 2.5rem;
+            animation: fadeInUp 1s ease 0.4s both;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease 0.6s both;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), #00c853);
+            color: var(--bg-primary);
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.4s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 25px var(--accent-glow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 8px 40px rgba(0, 230, 118, 0.5);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-primary);
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 2px solid rgba(0, 230, 118, 0.4);
+            transition: all 0.4s ease;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0, 230, 118, 0.1);
+            border-color: var(--accent);
+            transform: translateY(-3px);
+        }
+
+        /* === Scroll Indicator === */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+            animation: bounce 2s infinite;
+        }
+
+        .scroll-indicator span {
+            display: block;
+            width: 24px; height: 24px;
+            border-bottom: 3px solid var(--accent);
+            border-left: 3px solid var(--accent);
+            transform: rotate(-45deg);
+            opacity: 0.6;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(15px); }
+        }
+
+        /* === Stats Bar === */
+        .stats-bar {
+            background: var(--bg-secondary);
+            border-top: 1px solid rgba(0, 230, 118, 0.1);
+            border-bottom: 1px solid rgba(0, 230, 118, 0.1);
+            padding: 2.5rem 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 4rem;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 2;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--accent);
+            display: block;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        /* === Section Common === */
+        .section {
+            padding: 6rem 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 4rem;
+        }
+
+        .section-tag {
+            display: inline-block;
+            background: rgba(0, 230, 118, 0.1);
+            color: var(--accent);
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .section-header h2 {
+            font-family: 'Amiri', serif;
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            margin-bottom: 1rem;
+            line-height: 1.4;
+        }
+
+        .section-header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        /* === Features Grid === */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 230, 118, 0.1);
+            border-radius: 20px;
+            padding: 0;
+            overflow: hidden;
+            transition: all 0.5s ease;
+            position: relative;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(0, 230, 118, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 230, 118, 0.1);
+        }
+
+        .feature-card-image {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-bottom: 1px solid rgba(0, 230, 118, 0.1);
+        }
+
+        .feature-card-body {
+            padding: 1.8rem;
+        }
+
+        .feature-icon {
+            width: 55px; height: 55px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.2rem;
+            position: relative;
+        }
+
+        .feature-icon.green { background: rgba(0, 230, 118, 0.15); }
+        .feature-icon.gold { background: rgba(255, 215, 0, 0.15); }
+        .feature-icon.red { background: rgba(255, 82, 82, 0.15); }
+        .feature-icon.blue { background: rgba(68, 138, 255, 0.15); }
+
+        .feature-card h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        /* === How it Works === */
+        .steps-section {
+            background: var(--bg-secondary);
+        }
+
+        .steps-container {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .steps-container::before {
+            content: '';
+            position: absolute;
+            right: 30px;
+            top: 0; bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, var(--accent), transparent);
+            border-radius: 3px;
+        }
+
+        .step {
+            display: flex;
+            gap: 2rem;
+            align-items: flex-start;
+            margin-bottom: 3rem;
+            position: relative;
+            opacity: 0;
+            transform: translateX(30px);
+            transition: all 0.6s ease;
+        }
+
+        .step.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .step-number {
+            width: 60px; height: 60px;
+            min-width: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), #00c853);
+            color: var(--bg-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            font-weight: 900;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 0 30px var(--accent-glow);
+        }
+
+        .step-content {
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 230, 118, 0.1);
+            border-radius: 16px;
+            padding: 1.8rem;
+            flex: 1;
+        }
+
+        .step-content h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: var(--accent);
+        }
+
+        .step-content p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* === Reciters Section === */
+        .reciters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .reciter-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 230, 118, 0.08);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.4s ease;
+        }
+
+        .reciter-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+            box-shadow: 0 10px 40px rgba(0, 230, 118, 0.08);
+        }
+
+        .reciter-avatar {
+            width: 70px; height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(0, 230, 118, 0.2), rgba(255, 215, 0, 0.2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 1rem;
+            border: 2px solid rgba(0, 230, 118, 0.2);
+        }
+
+        .reciter-card h4 {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .reciter-card span {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        /* === CTA Section === */
+        .cta-section {
+            text-align: center;
+            padding: 6rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+            border-radius: 50%;
+            opacity: 0.3;
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 2;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .cta-content h2 {
+            font-family: 'Amiri', serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            margin-bottom: 1.5rem;
+        }
+
+        .cta-content p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+
+        /* === Footer === */
+        .footer {
+            background: var(--bg-secondary);
+            border-top: 1px solid rgba(0, 230, 118, 0.1);
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .footer p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .footer .heart {
+            color: #ff5252;
+            animation: heartbeat 1.5s infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        /* === Animations === */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.7s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* === Quran Verse Decoration === */
+        .quran-verse-block {
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 20px;
+            padding: 2.5rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .quran-verse-block::before,
+        .quran-verse-block::after {
+            content: '❁';
+            position: absolute;
+            color: var(--accent-gold);
+            font-size: 1.5rem;
+            opacity: 0.5;
+        }
+
+        .quran-verse-block::before { top: 0.8rem; right: 1.5rem; }
+        .quran-verse-block::after { bottom: 0.8rem; left: 1.5rem; }
+
+        .quran-verse-block p {
+            font-family: 'Amiri', serif;
+            font-size: 1.6rem;
+            line-height: 2.2;
+            color: var(--accent-gold);
+        }
+
+        .quran-verse-block cite {
+            display: block;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-style: normal;
+        }
+
+        /* === Mobile Menu === */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* === Responsive === */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .mobile-menu-btn { display: block; }
+            .stats-bar { gap: 2rem; }
+            .stat-number { font-size: 1.8rem; }
+            .steps-container::before { display: none; }
+            .step { flex-direction: column; align-items: center; text-align: center; }
+            .hero-buttons { flex-direction: column; align-items: center; }
+            .features-grid { grid-template-columns: 1fr; }
+        }
+
+        /* === Karaoke Demo Animation === */
+        .karaoke-demo {
+            max-width: 700px;
+            margin: 2rem auto;
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 230, 118, 0.15);
+            border-radius: 16px;
+            padding: 2.5rem;
+            text-align: center;
+            direction: rtl;
+        }
+
+        .karaoke-demo .verse-word {
+            display: inline-block;
+            font-family: 'Amiri', serif;
+            font-size: 2rem;
+            color: var(--text-primary);
+            margin: 0 0.3rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            animation: karaoke-highlight 8s infinite;
+        }
+
+        .karaoke-demo .verse-word:nth-child(1) { animation-delay: 0s; }
+        .karaoke-demo .verse-word:nth-child(2) { animation-delay: 1s; }
+        .karaoke-demo .verse-word:nth-child(3) { animation-delay: 2s; }
+        .karaoke-demo .verse-word:nth-child(4) { animation-delay: 3s; }
+        .karaoke-demo .verse-word:nth-child(5) { animation-delay: 4s; }
+        .karaoke-demo .verse-word:nth-child(6) { animation-delay: 5s; }
+        .karaoke-demo .verse-word:nth-child(7) { animation-delay: 6s; }
+
+        @keyframes karaoke-highlight {
+            0%, 10% { color: var(--text-primary); background: transparent; }
+            12%, 14% { color: var(--bg-primary); background: var(--accent); box-shadow: 0 0 20px var(--accent-glow); transform: scale(1.1); }
+            16%, 100% { color: var(--text-primary); background: transparent; }
+        }
+
+        .karaoke-label {
+            display: block;
+            margin-top: 1.2rem;
+            font-size: 0.85rem;
+            color: var(--accent);
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Animated Particles -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <a href="#" class="nav-logo">
+            <span class="logo-icon">📖</span>
+            محفّظ القرآن
+        </a>
+        <ul class="nav-links">
+            <li><a href="#features">المميزات</a></li>
+            <li><a href="#how-it-works">كيف يعمل</a></li>
+            <li><a href="#reciters">القرّاء</a></li>
+            <li><a href="./index.html" class="nav-cta">ابدأ الحفظ الآن ←</a></li>
+        </ul>
+        <button class="mobile-menu-btn" onclick="document.querySelector('.nav-links').style.display = document.querySelector('.nav-links').style.display === 'flex' ? 'none' : 'flex'">☰</button>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <span class="hero-badge">✨ مجاني بالكامل — بدون تسجيل أو إعلانات</span>
+            <h1>
+                احفظ القرآن الكريم
+                <br>
+                بطريقة <span class="highlight">ذكية وتفاعلية</span>
+            </h1>
+            <p>
+                منصة متكاملة تجمع بين الاستماع للقرّاء المفضلين، المتابعة بخاصية الكاراوكي الذكي،
+                التسميع الصوتي بتقنيات الاستوديو، ووضع الأطفال المرح — كل ذلك في مكان واحد
+            </p>
+            <div class="hero-buttons">
+                <a href="./index.html" class="btn-primary">🚀 ابدأ الحفظ مجاناً</a>
+                <a href="#features" class="btn-secondary">🔍 استكشف المميزات</a>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <span></span>
+        </div>
+    </section>
+
+    <!-- Stats Bar -->
+    <div class="stats-bar">
+        <div class="stat-item fade-in">
+            <span class="stat-number">114</span>
+            <div class="stat-label">سورة كريمة</div>
+        </div>
+        <div class="stat-item fade-in">
+            <span class="stat-number">8+</span>
+            <div class="stat-label">شيوخ وقرّاء</div>
+        </div>
+        <div class="stat-item fade-in">
+            <span class="stat-number">3</span>
+            <div class="stat-label">مؤثرات صوتية</div>
+        </div>
+        <div class="stat-item fade-in">
+            <span class="stat-number">∞</span>
+            <div class="stat-label">تسميع مجاني</div>
+        </div>
+    </div>
+
+    <!-- Quran Verse -->
+    <section class="section">
+        <div class="quran-verse-block fade-in">
+            <p>وَلَقَدْ يَسَّرْنَا الْقُرْآنَ لِلذِّكْرِ فَهَلْ مِن مُّدَّكِرٍ</p>
+            <cite>— سورة القمر، آية ١٧</cite>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="section" id="features">
+        <div class="section-header fade-in">
+            <span class="section-tag">✨ المميزات</span>
+            <h2>كل ما تحتاجه لحفظ القرآن في مكان واحد</h2>
+            <p>صُمّمت كل ميزة بعناية فائقة لتقديم أفضل تجربة حفظ وتسميع ممكنة</p>
+        </div>
+
+        <div class="features-grid">
+            <!-- Feature 1: Karaoke -->
+            <div class="feature-card fade-in">
+                <img src="promo-assets/karaoke.jpg" alt="خاصية الكاراوكي الذكي" class="feature-card-image">
+                <div class="feature-card-body">
+                    <div class="feature-icon green">🎵</div>
+                    <h3>الكاراوكي الذكي</h3>
+                    <p>تابع كلمات الآية المضيئة بالتزامن مع صوت الشيخ القارئ — كلمة بكلمة في الوقت الحقيقي، لتعلّم النطق السليم والتجويد</p>
+                </div>
+            </div>
+
+            <!-- Feature 2: Recording -->
+            <div class="feature-card fade-in">
+                <img src="promo-assets/recording.jpg" alt="مسجل التسميع الاحترافي" class="feature-card-image">
+                <div class="feature-card-body">
+                    <div class="feature-icon red">🎙️</div>
+                    <h3>مسجل التسميع الاحترافي</h3>
+                    <p>سجّل تلاوتك بمؤثرات صوتية احترافية: صوت عادي، استوديو محسّن، أو صدى المسجد الفخم — ثم قارن تسجيلك بصوت الشيخ</p>
+                </div>
+            </div>
+
+            <!-- Feature 3: Listening Mode -->
+            <div class="feature-card fade-in">
+                <img src="promo-assets/listening.jpg" alt="وضع الاستماع المتتالي" class="feature-card-image">
+                <div class="feature-card-body">
+                    <div class="feature-icon gold">🎧</div>
+                    <h3>وضع الاستماع المتتالي</h3>
+                    <p>اختر سوراً متعددة واستمع إليها بالترتيب تلقائياً بصوت قارئك المفضل — مثالي للاستماع أثناء القيادة أو قبل النوم</p>
+                </div>
+            </div>
+
+            <!-- Feature 4: Kids Mode -->
+            <div class="feature-card fade-in">
+                <img src="promo-assets/kids.jpg" alt="وضع الأطفال" class="feature-card-image">
+                <div class="feature-card-body">
+                    <div class="feature-icon blue">👶</div>
+                    <h3>وضع الأطفال المرح</h3>
+                    <p>واجهة مبهجة بألوان زاهية وأيقونات كرتونية تجعل الأطفال يحبّون حفظ القرآن — مع صوت الشيخ خليفة الطنيجي المخصص للأطفال</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Karaoke Live Demo -->
+    <section class="section" style="background: var(--bg-secondary);">
+        <div class="section-header fade-in">
+            <span class="section-tag">🎵 تجربة حية</span>
+            <h2>شاهد الكاراوكي الذكي أثناء العمل</h2>
+            <p>كل كلمة تُضاء بالتزامن مع صوت القارئ لتتابع النطق الصحيح</p>
+        </div>
+        <div class="karaoke-demo fade-in">
+            <span class="verse-word">بِسْمِ</span>
+            <span class="verse-word">اللَّهِ</span>
+            <span class="verse-word">الرَّحْمَٰنِ</span>
+            <span class="verse-word">الرَّحِيمِ</span>
+            <span class="verse-word">الْحَمْدُ</span>
+            <span class="verse-word">لِلَّهِ</span>
+            <span class="verse-word">رَبِّ</span>
+            <span class="karaoke-label">⬆ لاحظ كيف تُضاء كل كلمة بالتتابع مع صوت القارئ</span>
+        </div>
+    </section>
+
+    <!-- How it Works -->
+    <section class="section steps-section" id="how-it-works">
+        <div class="section-header fade-in">
+            <span class="section-tag">📋 كيف يعمل</span>
+            <h2>ابدأ الحفظ في ٤ خطوات بسيطة</h2>
+        </div>
+
+        <div class="steps-container">
+            <div class="step" data-step>
+                <div class="step-number">١</div>
+                <div class="step-content">
+                    <h3>🔊 اختر السورة والقارئ</h3>
+                    <p>اختر أي سورة من القرآن الكريم واختر صوت الشيخ المفضل لديك من بين أكثر من ٨ قرّاء مشهورين</p>
+                </div>
+            </div>
+
+            <div class="step" data-step>
+                <div class="step-number">٢</div>
+                <div class="step-content">
+                    <h3>🎵 استمع وتابع بالكاراوكي</h3>
+                    <p>اضغط زر التشغيل وتابع الكلمات المضيئة بالتزامن مع صوت القارئ. فعّل التكرار أو التلاوة المتتالية حسب حاجتك</p>
+                </div>
+            </div>
+
+            <div class="step" data-step>
+                <div class="step-number">٣</div>
+                <div class="step-content">
+                    <h3>🎙️ سمّع بصوتك وسجّل</h3>
+                    <p>أخفِ النص واضغط زر التسجيل لتسميع الآية غيباً بصوتك. اختر مؤثر صدى المسجد لتجربة روحانية مميزة</p>
+                </div>
+            </div>
+
+            <div class="step" data-step>
+                <div class="step-number">٤</div>
+                <div class="step-content">
+                    <h3>✅ قارن وراجع وتقدّم</h3>
+                    <p>استمع لتسجيلك وقارنه بصوت الشيخ. تابع تقدمك عبر مؤشر الحفظ الذكي وانتقل للآية التالية حتى تتم حفظ السورة كاملة</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reciters Section -->
+    <section class="section" id="reciters">
+        <div class="section-header fade-in">
+            <span class="section-tag">🧑‍🏫 القرّاء</span>
+            <h2>نخبة من أشهر قرّاء العالم الإسلامي</h2>
+        </div>
+
+        <div class="reciters-grid">
+            <div class="reciter-card fade-in">
+                <div class="reciter-avatar">🕌</div>
+                <h4>الشيخ الحصري</h4>
+                <span>المعلم</span>
+            </div>
+            <div class="reciter-card fade-in">
+                <div class="reciter-avatar">🌟</div>
+                <h4>فارس عبّاد</h4>
+                <span>صوت هادئ ومؤثر</span>
+            </div>
+            <div class="reciter-card fade-in">
+                <div class="reciter-avatar">📖</div>
+                <h4>المنشاوي المعلم</h4>
+                <span>مع ترديد الأطفال</span>
+            </div>
+            <div class="reciter-card fade-in">
+                <div class="reciter-avatar">👶</div>
+                <h4>خليفة الطنيجي</h4>
+                <span>مخصص للأطفال</span>
+            </div>
+            <div class="reciter-card fade-in">
+                <div class="reciter-avatar">🎤</div>
+                <h4>ماهر المعيقلي</h4>
+                <span>إمام الحرم</span>
+            </div>
+            <div class="reciter-card fade-in">
+                <div class="reciter-avatar">💎</div>
+                <h4>مشاري العفاسي</h4>
+                <span>صوت عذب ومميز</span>
+            </div>
+            <div class="reciter-card fade-in">
+                <div class="reciter-avatar">🌙</div>
+                <h4>عبدالرحمن السديس</h4>
+                <span>إمام الحرم المكي</span>
+            </div>
+            <div class="reciter-card fade-in">
+                <div class="reciter-avatar">⭐</div>
+                <h4>عبدالباسط عبدالصمد</h4>
+                <span>صوت الحرمين</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="cta-content fade-in">
+            <h2>🕌 ابدأ رحلة الحفظ الآن</h2>
+            <p>لا تحتاج لتسجيل حساب أو تحميل تطبيق — افتح المنصة مباشرة من المتصفح وابدأ الحفظ فوراً. يعمل على جميع الأجهزة.</p>
+            <a href="./index.html" class="btn-primary" style="font-size: 1.3rem; padding: 1.2rem 3rem;">
+                📖 افتح محفّظ القرآن الآن
+            </a>
+            <p style="margin-top: 1.5rem; font-size: 0.85rem; opacity: 0.6;">
+                يعمل على الهاتف والتابلت والكمبيوتر — بدون تحميل
+            </p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>صُنع بـ <span class="heart">❤️</span> لخدمة كتاب الله | محفّظ القرآن الكريم © 2024</p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Generate floating particles
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 40; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDuration = (6 + Math.random() * 6) + 's';
+            particle.style.animationDelay = Math.random() * 8 + 's';
+            particle.style.width = particle.style.height = (2 + Math.random() * 4) + 'px';
+            particlesContainer.appendChild(particle);
+        }
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 80) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Intersection Observer for fade-in animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-in, .step').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Counter animation for stats
+        function animateCounter(element, target, duration = 2000) {
+            const isInfinity = target === '∞';
+            if (isInfinity) { element.textContent = '∞'; return; }
+
+            const num = parseInt(target);
+            if (isNaN(num)) { element.textContent = target; return; }
+
+            let start = 0;
+            const step = num / (duration / 16);
+            
+            function update() {
+                start += step;
+                if (start >= num) {
+                    element.textContent = target;
+                    return;
+                }
+                element.textContent = Math.floor(start) + (target.includes('+') ? '+' : '');
+                requestAnimationFrame(update);
+            }
+            update();
+        }
+
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const statNumbers = entry.target.querySelectorAll('.stat-number');
+                    statNumbers.forEach(el => {
+                        animateCounter(el, el.textContent.trim());
+                    });
+                    statsObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        statsObserver.observe(document.querySelector('.stats-bar'));
+    </script>
+
+</body>
+</html>
